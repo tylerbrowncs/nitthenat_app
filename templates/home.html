@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>NitTheNat | Home</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -10,30 +10,140 @@
             --twitch-purple: #9146FF;
             --twitch-dark: #18181b;
             --bg-gray: #323233;
+            --sidebar-width: 280px; 
+        }
+
+        html, body {
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            width: 100%;
         }
 
         body {
             font-family: 'Inter', -apple-system, sans-serif;
             background-color: var(--bg-gray);
-            display: flex;
-            justify-content: center;
-            align-items: center;
             min-height: 100vh;
-            margin: 0;
         }
 
-        /* NEW wrapper for vertical layout */
+        /* --- SIDEBAR FIXED --- */
+        .sidebar {
+            height: 100%;
+            width: var(--sidebar-width);
+            position: fixed;
+            z-index: 2000;
+            top: 0;
+            left: 0;
+            background-color: var(--twitch-dark);
+            transform: translateX(-100%); 
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding-top: 20px;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+            overflow-x: hidden; 
+            box-sizing: border-box;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: flex-end;
+            padding: 10px 20px;
+        }
+
+        .close-menu {
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        /* Container for all sidebar links to manage hover boundaries */
+        .nav-content {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .sidebar a, .dropdown-btn {
+            padding: 15px 25px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            color: white;
+            display: block;
+            border: none;
+            background: none;
+            width: 100%; 
+            box-sizing: border-box; 
+            text-align: left;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .sidebar a:hover, .dropdown-btn:hover {
+            background-color: var(--twitch-purple);
+        }
+
+        /* --- DROPDOWN ANIMATION --- */
+        .dropdown-container {
+            max-height: 0;
+            overflow: hidden;
+            background-color: #26262c;
+            transition: max-height 0.3s ease-out; /* Smooth slide down */
+        }
+        
+        .dropdown-container a {
+            padding-left: 50px;
+            font-size: 0.95rem;
+        }
+
+        .fa-caret-down {
+            float: right;
+            margin-top: 5px;
+            transition: transform 0.3s ease;
+        }
+
+        /* --- MENU BUTTON --- */
+        .menu-btn {
+            position: fixed;
+            top: calc(15px + env(safe-area-inset-top)); 
+            left: 15px;
+            font-size: 20px;
+            color: white;
+            background: var(--twitch-purple);
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            cursor: pointer;
+            z-index: 1900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+
+        .menu-btn:active {
+            transform: scale(0.9);
+        }
+
+        /* --- MAIN CONTENT --- */
         .page-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 25px;
-            width: 100%;
+            justify-content: center;
+            padding: 100px 20px 40px;
+            min-height: 100vh;
+            box-sizing: border-box;
         }
 
         .profile-card {
             background: rgb(41, 40, 40);
-            width: 90%;
+            width: 100%;
             max-width: 450px;
             border-radius: 16px;
             border: 2px solid var(--twitch-purple);
@@ -43,104 +153,59 @@
             padding-bottom: 30px;
         }
 
-        .header-banner {
-            background-color: var(--twitch-purple);
-            padding: 30px 20px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            color: white;
-        }
+        .header-banner { background-color: var(--twitch-purple); padding: 30px 20px; display: flex; align-items: center; gap: 20px; color: white; }
+        .profile-pic { width: 80px; height: 80px; border-radius: 12px; border: 3px solid white; background: #222; }
+        .header-text h1 { margin: 0; font-size: 1.8rem; text-align: left; }
+        .header-text p { margin: 0; opacity: 0.9; font-size: 1rem; text-align: left; }
+        .tag-container { padding: 20px 20px 10px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+        .tag { background: #f0e6ff; color: var(--twitch-purple); padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; border: 1px solid var(--twitch-purple); }
+        .bio { padding: 0 30px; color: #8606ff; font-weight: bold; line-height: 1.5; font-size: 0.95rem; }
+        .social-links { margin-top: 25px; display: flex; justify-content: center; gap: 15px; }
+        .social-icon { width: 45px; height: 45px; background: var(--twitch-purple); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.2rem; transition: transform 0.2s, background 0.2s; }
+        .social-icon:hover { transform: translateY(-3px); background: #772ce8; }
+        .ad-container { width: 100%; max-width: 320px; text-align: center; transform: scale(0.9); margin-top: 20px; }
 
-        .profile-pic {
-            width: 80px;
-            height: 80px;
-            border-radius: 12px;
-            border: 3px solid white;
-            background: #222;
-        }
-
-        .header-text h1 {
-            margin: 0;
-            font-size: 1.8rem;
-            text-align: left;
-        }
-
-        .header-text p {
-            margin: 0;
-            opacity: 0.9;
-            font-size: 1rem;
-            text-align: left;
-        }
-
-        .tag-container {
-            padding: 20px 20px 10px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .tag {
-            background: #f0e6ff;
-            color: var(--twitch-purple);
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            border: 1px solid var(--twitch-purple);
-        }
-
-        .bio {
-            padding: 0 30px;
-            color: #8606ff;
-            font-weight: bold;
-            line-height: 1.5;
-            font-size: 0.95rem;
-        }
-
-        .social-links {
-            margin-top: 25px;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        .social-icon {
-            width: 45px;
-            height: 45px;
-            background: var(--twitch-purple);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            font-size: 1.2rem;
-            transition: transform 0.2s, background 0.2s;
-        }
-
-        .social-icon:hover {
-            transform: translateY(-3px);
-            background: #772ce8;
-        }
-
-        /* AD styling */
-        .ad-container {
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 320px;   /* Controls ad width */
-            text-align: center;
-            transform: scale(0.9); /* Slightly smaller */
-            margin-bottom: 40px;
+            height: 100%;
+            z-index: 1950;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(2px);
         }
     </style>
-
 </head>
-
 <body>
 
-    <div class="page-wrapper">
+    <button class="menu-btn" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
 
+    <div id="overlay" onclick="toggleSidebar()"></div>
+
+    <div id="mySidebar" class="sidebar">
+        <div class="sidebar-header">
+            <button class="close-menu" onclick="toggleSidebar()"><i class="fas fa-times"></i></button>
+        </div>
+        
+        <div class="nav-content">
+            <a href="https://nitthenat.com/"><i class="fas fa-home"></i> Home</a>
+            
+            <button class="dropdown-btn">
+                <i class="fas fa-newspaper"></i> Whats new? <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-container">
+                <a href="https://nitthenat.com/mkw100">100% Speedrun</a>
+            </div>
+            
+            <a href="https://twitch.tv/nitthenat"><i class="fab fa-twitch"></i> Twitch</a>
+        </div>
+    </div>
+
+    <div class="page-wrapper">
         <div class="profile-card">
             <div class="header-banner">
                 <img src="https://static-cdn.jtvnw.net/jtv_user_pictures/55d25e67-8952-4674-8a9b-778895aa2d04-profile_image-70x70.png" alt="NiTTHeNat" class="profile-pic">
@@ -159,7 +224,7 @@
             </div>
 
             <div class="bio">
-                <p>Funny goofy streamer, whos chair has wheels. Heavily involved in the competetive mario kart scheme.</p>
+                <p>Funny goofy streamer, whose chair has wheels. Heavily involved in the competitive Mario Kart scene.</p>
             </div>
 
             <div class="social-links">
@@ -169,14 +234,42 @@
             </div>
         </div>
 
-        <!-- Ad Section (Below Main Content) -->
         <div class="ad-container">
-            <script async="async" data-cfasync="false"
-                src="https://pl28730169.effectivegatecpm.com/009fa34562b0b456ed9607917c176936/invoke.js">
-            </script>
-            <div id="container-009fa34562b0b456ed9607917c176936"></div>
+        <script async="async" data-cfasync="false" src="https://pl28730169.effectivegatecpm.com/009fa34562b0b456ed9607917c176936/invoke.js"></script>
+        <div id="container-009fa34562b0b456ed9607917c176936"></div>
         </div>
 
-    </div>
+    <script>
+        function toggleSidebar() {
+            const sb = document.getElementById("mySidebar");
+            const overlay = document.getElementById("overlay");
+            const isOpen = sb.classList.contains("active");
+
+            if(isOpen) {
+                sb.classList.remove("active");
+                overlay.style.display = "none";
+            } else {
+                sb.classList.add("active");
+                overlay.style.display = "block";
+            }
+        }
+
+        var dropdowns = document.getElementsByClassName("dropdown-btn");
+        for (var i = 0; i < dropdowns.length; i++) {
+            dropdowns[i].addEventListener("click", function() {
+                var container = this.nextElementSibling;
+                const icon = this.querySelector('.fa-caret-down');
+                
+                // If it's closed, open it
+                if (!container.style.maxHeight || container.style.maxHeight === "0px") {
+                    container.style.maxHeight = container.scrollHeight + "px";
+                    icon.style.transform = "rotate(180deg)";
+                } else {
+                    container.style.maxHeight = "0px";
+                    icon.style.transform = "rotate(0deg)";
+                }
+            });
+        }
+    </script>
 </body>
 </html>

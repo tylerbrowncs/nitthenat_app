@@ -2,14 +2,27 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>NitTheNat | MKWorld 100%</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --twitch-purple: #9146FF;
+            --twitch-dark: #18181b;
+            --bg-gray: #2c2c2e; 
+            --sidebar-width: 280px;
+        }
+
         /* Base Page Setup */
-        body {
+        html, body {
+            overflow-x: hidden;
             margin: 0;
             padding: 0;
-            background-color: #2c2c2e; 
+            width: 100%;
+        }
+
+        body {
+            background-color: var(--bg-gray); 
             font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
             color: #ffffff;
             display: flex;
@@ -17,7 +30,117 @@
             align-items: center;
         }
 
-        /* 1. Full-Width Image Banner */
+        /* --- SIDEBAR STYLES --- */
+        .sidebar {
+            height: 100%;
+            width: var(--sidebar-width);
+            position: fixed;
+            z-index: 2000;
+            top: 0;
+            left: 0;
+            background-color: var(--twitch-dark);
+            transform: translateX(-100%); 
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding-top: 20px;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+            overflow-x: hidden; 
+            box-sizing: border-box;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: flex-end;
+            padding: 10px 20px;
+        }
+
+        .close-menu {
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        .nav-content {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .sidebar a, .dropdown-btn {
+            padding: 15px 25px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            color: white;
+            display: block;
+            border: none;
+            background: none;
+            width: 100%; 
+            box-sizing: border-box; 
+            text-align: left;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .sidebar a:hover, .dropdown-btn:hover {
+            background-color: var(--twitch-purple);
+        }
+
+        .dropdown-container {
+            max-height: 0;
+            overflow: hidden;
+            background-color: #26262c;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .dropdown-container a {
+            padding-left: 50px;
+            font-size: 0.95rem;
+        }
+
+        .fa-caret-down {
+            float: right;
+            margin-top: 5px;
+            transition: transform 0.3s ease;
+        }
+
+        /* --- MENU BUTTON --- */
+        .menu-btn {
+            position: fixed;
+            top: calc(15px + env(safe-area-inset-top)); 
+            left: 15px;
+            font-size: 20px;
+            color: white;
+            background: var(--twitch-purple);
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            cursor: pointer;
+            z-index: 1900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1950;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(2px);
+        }
+
+        /* --- CONTENT STYLES --- */
         .hero-banner {
             width: 100%;
             height: 400px;
@@ -31,14 +154,15 @@
         }
 
         .hero-banner h1 {
-            font-size: 4rem;
+            font-size: 3rem;
             text-transform: uppercase;
             letter-spacing: 5px;
             text-shadow: 0 5px 15px rgba(0,0,0,0.6);
             margin: 0;
+            text-align: center;
+            padding: 0 20px;
         }
 
-        /* 2. Centered Blog/Rule Panel */
         .content-panel {
             max-width: 850px;
             width: 90%;
@@ -67,7 +191,6 @@
             font-size: 1.1rem;
         }
 
-        /* Rule List Styling - Tightened Spacing */
         .rule-list {
             list-style: none;
             padding: 0;
@@ -75,7 +198,7 @@
         }
 
         .rule-list li {
-            margin-bottom: 10px; /* Reduced from 20px for tighter look */
+            margin-bottom: 10px;
             padding-left: 30px;
             position: relative;
             line-height: 1.4;
@@ -91,7 +214,6 @@
             top: -2px;
         }
 
-        /* Sub-header style for the list */
         .list-subhead {
             color: #ffffff;
             font-weight: bold;
@@ -101,18 +223,14 @@
             text-underline-offset: 4px;
         }
         
-        .list-subhead::before {
-            content: "" !important; /* Removes dot from subhead */
-        }
+        .list-subhead::before { content: "" !important; }
 
-        /* 3. Ad Section */
         .ad-container {
             text-align: center;
             margin: 40px 0 60px 0;
             width: 100%;
         }
 
-        /* Links */
         .back-link {
             display: inline-block;
             margin-bottom: 20px;
@@ -126,16 +244,46 @@
         a { color: #8a3ffc; text-decoration: none; }
         a:hover { text-decoration: underline; }
 
+        /* Responsive tweak for mobile title */
+        @media (max-width: 600px) {
+            .hero-banner h1 { font-size: 1.8rem; }
+            .content-panel { padding: 30px 20px; }
+        }
     </style>
 </head>
 <body>
+
+    <button class="menu-btn" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="overlay" onclick="toggleSidebar()"></div>
+
+    <div id="mySidebar" class="sidebar">
+        <div class="sidebar-header">
+            <button class="close-menu" onclick="toggleSidebar()"><i class="fas fa-times"></i></button>
+        </div>
+        
+        <div class="nav-content">
+            <a href="https://nitthenat.com/"><i class="fas fa-home"></i> Home</a>
+            
+            <button class="dropdown-btn">
+                <i class="fas fa-newspaper"></i> Whats new? <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-container">
+                <a href="https://nitthenat.com/mkw100">100% Speedrun</a>
+            </div>
+
+            <a href="https://twitch.tv/nitthenat"><i class="fab fa-twitch"></i> Twitch</a>
+        </div>
+    </div>
 
     <header class="hero-banner">
         <h1>MarioKart World 100% Speedrun</h1>
     </header>
 
     <main class="content-panel">
-        <a href="#" class="back-link">← Home</a>
+        <a href="https://nitthenat.com/" class="back-link">← Home</a>
         
         <h2>NitTheNat's MKWorld 100% Speedrun 2026</h2>
         
@@ -178,5 +326,36 @@
         <div id="container-009fa34562b0b456ed9607917c176936"></div>
     </div>
 
+    <script>
+        function toggleSidebar() {
+            const sb = document.getElementById("mySidebar");
+            const overlay = document.getElementById("overlay");
+            const isOpen = sb.classList.contains("active");
+
+            if(isOpen) {
+                sb.classList.remove("active");
+                overlay.style.display = "none";
+            } else {
+                sb.classList.add("active");
+                overlay.style.display = "block";
+            }
+        }
+
+        var dropdowns = document.getElementsByClassName("dropdown-btn");
+        for (var i = 0; i < dropdowns.length; i++) {
+            dropdowns[i].addEventListener("click", function() {
+                var container = this.nextElementSibling;
+                const icon = this.querySelector('.fa-caret-down');
+                
+                if (!container.style.maxHeight || container.style.maxHeight === "0px") {
+                    container.style.maxHeight = container.scrollHeight + "px";
+                    icon.style.transform = "rotate(180deg)";
+                } else {
+                    container.style.maxHeight = "0px";
+                    icon.style.transform = "rotate(0deg)";
+                }
+            });
+        }
+    </script>
 </body>
 </html>
