@@ -1,4 +1,4 @@
-from flask import Flask, redirect, request, render_template_string, render_template
+from flask import Flask, redirect, request, render_template_string, render_template, send_file
 
 app = Flask(__name__)
 
@@ -65,5 +65,9 @@ def add_link():
         </form>
     ''', message=message)
 
+
+@app.route("/image/offline")
+def imgoff():
+    return send_file("templates/background.png")
 if __name__ == "__main__":
     app.run(debug=True)
