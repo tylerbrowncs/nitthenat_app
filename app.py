@@ -1,19 +1,26 @@
-from flask import Flask, redirect, abort
-import os, json
+import requests
+import csv
+from flask import Flask, redirect
+
 app = Flask(__name__)
 
+# Replace this with your "Publish to Web" CSV URL
+SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT4g-5ONfHBYKFbAP4YFRMzqeok-2CAsSgvf-40gwrwnGlz2E06-Sxxp752D84emLak-zKtFvv3IDye/pub?output=csv"
+
 def get_destinations():
-    # This finds the folder app.py is in, then goes one level up
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    parent_dir = os.path.dirname(base_dir)
-    json_path = os.path.join(parent_dir, 'shortcut_data.json')
-    
+    links = {}
     try:
-        with open(json_path, 'r') as f:
-            return json.load(f)
-    except FileNotFoundError:
-        print(f"Error: Could not find {json_path}")
-        return {}
+        response = requests.get(SHEET_CSV_URL)
+        # Decode the CSV data from the web
+        decoded_content = response.content.decode('utf-8')
+        cr = csv.reader(decoded_content.splitlines(), delimiter=',')
+        for row in cr:
+            if len(row) >= 2:
+                # row[0] is shortcut, row[1] is URL
+                links[row[0].strip()] = row[1].strip()
+    except Exception as e:
+        print(f"Error fetching sheet: {e}")
+    return links
 
 @app.route('/')
 def home():
