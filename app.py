@@ -25,7 +25,7 @@ def home():
     return render_template("home.html")
 
 @app.route("/mkw100")
-def mkw100():
+def speedrun_post():
     return render_template("100percentMKW.html")
 
 @app.route('/r/<key>')
