@@ -22,6 +22,15 @@
             margin: 0;
         }
 
+        /* NEW wrapper for vertical layout */
+        .page-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+            width: 100%;
+        }
+
         .profile-card {
             background: rgb(41, 40, 40);
             width: 90%;
@@ -29,7 +38,7 @@
             border-radius: 16px;
             border: 2px solid var(--twitch-purple);
             overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             text-align: center;
             padding-bottom: 30px;
         }
@@ -48,7 +57,7 @@
             height: 80px;
             border-radius: 12px;
             border: 3px solid white;
-            background: #222; /* Placeholder color */
+            background: #222;
         }
 
         .header-text h1 {
@@ -108,46 +117,66 @@
             justify-content: center;
             text-decoration: none;
             font-size: 1.2rem;
-            transition: transform 0.2s;
+            transition: transform 0.2s, background 0.2s;
         }
 
         .social-icon:hover {
             transform: translateY(-3px);
             background: #772ce8;
         }
+
+        /* AD styling */
+        .ad-container {
+            width: 100%;
+            max-width: 320px;   /* Controls ad width */
+            text-align: center;
+            transform: scale(0.9); /* Slightly smaller */
+            margin-bottom: 40px;
+        }
     </style>
 </head>
+
 <body>
 
-    <div class="profile-card">
-        <div class="header-banner">
-            <img src="https://static-cdn.jtvnw.net/jtv_user_pictures/55d25e67-8952-4674-8a9b-778895aa2d04-profile_image-70x70.png" alt="NiTTHeNat" class="profile-pic">
-            <div class="header-text">
-                <h1>Nathaniel</h1>
-                <p>@NitTheNat</p>
+    <div class="page-wrapper">
+
+        <div class="profile-card">
+            <div class="header-banner">
+                <img src="https://static-cdn.jtvnw.net/jtv_user_pictures/55d25e67-8952-4674-8a9b-778895aa2d04-profile_image-70x70.png" alt="NiTTHeNat" class="profile-pic">
+                <div class="header-text">
+                    <h1>Nathaniel</h1>
+                    <p>@NitTheNat</p>
+                </div>
+            </div>
+
+            <div class="tag-container">
+                <span class="tag">AL Staff</span>
+                <span class="tag">ARC Team Member</span>
+                <span class="tag">TM Team Member</span>
+                <span class="tag">Speedrunner</span>
+                <span class="tag">Streamer</span>
+            </div>
+
+            <div class="bio">
+                <p>Funny goofy streamer, whos chair has wheels. Heavily involved in the competetive mario kart scheme.</p>
+            </div>
+
+            <div class="social-links">
+                <a href="https://twitch.tv/nitthenat" class="social-icon"><i class="fab fa-twitch"></i></a>
+                <a href="https://x.com/nitthenat_" class="social-icon"><i class="fab fa-twitter"></i></a>
+                <a href="https://discord.nitthenat.com" class="social-icon"><i class="fab fa-discord"></i></a>
             </div>
         </div>
 
-        <div class="tag-container">
-            <span class="tag">AL Staff</span>
-            <span class="tag">ARC Team Member</span>
-            <span class="tag">TM Team Member</span>
-            <span class="tag">Speedrunner</span>
-            <span class="tag">Streamer</span>
+        <!-- Ad Section (Below Main Content) -->
+        <div class="ad-container">
+            <script async="async" data-cfasync="false"
+                src="https://pl28730169.effectivegatecpm.com/009fa34562b0b456ed9607917c176936/invoke.js">
+            </script>
+            <div id="container-009fa34562b0b456ed9607917c176936"></div>
         </div>
 
-        <div class="bio">
-            <p>Funny goofy streamer, whos chair has wheels. Heavily involved in the competetive mario kart scheme.</p>
-        </div>
-
-        <div class="social-links">
-            <a href="https://twitch.tv/nitthenat" class="social-icon"><i class="fab fa-twitch"></i></a>
-            <a href="https://x.com/nitthenat_" class="social-icon"><i class="fab fa-twitter"></i></a>
-            <a href="https://discord.nitthenat.com" class="social-icon"><i class="fab fa-discord"></i></a>
-        </div>
     </div>
-    <script async="async" data-cfasync="false" src="https://pl28730169.effectivegatecpm.com/009fa34562b0b456ed9607917c176936/invoke.js"></script>
-    <div id="container-009fa34562b0b456ed9607917c176936"></div>
 
 </body>
 </html>
