@@ -24,6 +24,10 @@ def get_destinations():
 def home():
     return render_template("home.html")
 
+@app.route("/mkw100")
+def mkw100():
+    return render_template("100percentMKW.html")
+
 @app.route('/r/<key>')
 def reverse_proxy(key):
     data = get_destinations()
