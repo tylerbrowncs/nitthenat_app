@@ -1,4 +1,4 @@
-from flask import Flask, redirect, request, render_template_string
+from flask import Flask, redirect, request, render_template_string, render_template
 
 app = Flask(__name__)
 
@@ -22,7 +22,7 @@ def get_destinations():
 
 @app.route("/")
 def home():
-    return '<h1>NitTheNat</h1>'
+    return render_template("home.html")
 
 @app.route('/r/<key>')
 def reverse_proxy(key):
