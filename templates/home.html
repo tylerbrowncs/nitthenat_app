@@ -22,7 +22,13 @@
 
         body {
             font-family: 'Inter', -apple-system, sans-serif;
-            background-color: var(--bg-gray);
+            /* DIMMED BACKGROUND SETTINGS */
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                        url('background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
             min-height: 100vh;
         }
 
@@ -61,7 +67,6 @@
             border: none;
         }
 
-        /* Container for all sidebar links to manage hover boundaries */
         .nav-content {
             display: flex;
             flex-direction: column;
@@ -92,7 +97,7 @@
             max-height: 0;
             overflow: hidden;
             background-color: #26262c;
-            transition: max-height 0.3s ease-out; /* Smooth slide down */
+            transition: max-height 0.3s ease-out;
         }
         
         .dropdown-container a {
@@ -142,15 +147,16 @@
         }
 
         .profile-card {
-            background: rgb(41, 40, 40);
+            background: rgba(41, 40, 40, 0.95); /* Added slight transparency */
             width: 100%;
             max-width: 450px;
             border-radius: 16px;
             border: 2px solid var(--twitch-purple);
             overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             text-align: center;
             padding-bottom: 30px;
+            backdrop-filter: blur(5px); /* Makes the card pop against the BG */
         }
 
         .header-banner { background-color: var(--twitch-purple); padding: 30px 20px; display: flex; align-items: center; gap: 20px; color: white; }
@@ -159,11 +165,10 @@
         .header-text p { margin: 0; opacity: 0.9; font-size: 1rem; text-align: left; }
         .tag-container { padding: 20px 20px 10px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
         .tag { background: #f0e6ff; color: var(--twitch-purple); padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; border: 1px solid var(--twitch-purple); }
-        .bio { padding: 0 30px; color: #8606ff; font-weight: bold; line-height: 1.5; font-size: 0.95rem; }
+        .bio { padding: 0 30px; color: #9146FF; font-weight: bold; line-height: 1.5; font-size: 0.95rem; }
         .social-links { margin-top: 25px; display: flex; justify-content: center; gap: 15px; }
         .social-icon { width: 45px; height: 45px; background: var(--twitch-purple); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.2rem; transition: transform 0.2s, background 0.2s; }
         .social-icon:hover { transform: translateY(-3px); background: #772ce8; }
-        .ad-container { width: 100%; max-width: 320px; text-align: center; transform: scale(0.9); margin-top: 20px; }
 
         #overlay {
             display: none;
@@ -233,6 +238,7 @@
                 <a href="https://discord.nitthenat.com" class="social-icon"><i class="fab fa-discord"></i></a>
             </div>
         </div>
+    </div>
 
     <script>
         function toggleSidebar() {
@@ -255,7 +261,6 @@
                 var container = this.nextElementSibling;
                 const icon = this.querySelector('.fa-caret-down');
                 
-                // If it's closed, open it
                 if (!container.style.maxHeight || container.style.maxHeight === "0px") {
                     container.style.maxHeight = container.scrollHeight + "px";
                     icon.style.transform = "rotate(180deg)";
