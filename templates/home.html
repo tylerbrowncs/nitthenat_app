@@ -1,275 +1,47 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>NitTheNat | Home</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --twitch-purple: #9146FF;
-            --twitch-dark: #18181b;
-            --bg-gray: #323233;
-            --sidebar-width: 280px; 
-        }
+{% extends "base.html" %}
 
-        html, body {
-            overflow-x: hidden;
-            margin: 0;
-            padding: 0;
-            width: 100%;
-        }
+{% block title %}Home | NitTheNat{% endblock %}
 
-        body {
-            font-family: 'Inter', -apple-system, sans-serif;
-            /* DIMMED BACKGROUND SETTINGS */
-            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
-                        url('https://nitthenat.com/image/offline');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            background-repeat: no-repeat;
-            min-height: 100vh;
-        }
+{% block content %}
 
-        /* --- SIDEBAR FIXED --- */
-        .sidebar {
-            height: 100%;
-            width: var(--sidebar-width);
-            position: fixed;
-            z-index: 2000;
-            top: 0;
-            left: 0;
-            background-color: var(--twitch-dark);
-            transform: translateX(-100%); 
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            padding-top: 20px;
-            box-shadow: 5px 0 15px rgba(0,0,0,0.5);
-            overflow-x: hidden; 
-            box-sizing: border-box;
-        }
+<div class="profile-card">
+    <div class="header-banner">
+        <img src="https://static-cdn.jtvnw.net/jtv_user_pictures/55d25e67-8952-4674-8a9b-778895aa2d04-profile_image-70x70.png"
+             alt="NiTTHeNat"
+             class="profile-pic">
 
-        .sidebar.active {
-            transform: translateX(0);
-        }
-
-        .sidebar-header {
-            display: flex;
-            justify-content: flex-end;
-            padding: 10px 20px;
-        }
-
-        .close-menu {
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            background: none;
-            border: none;
-        }
-
-        .nav-content {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-        }
-
-        .sidebar a, .dropdown-btn {
-            padding: 15px 25px;
-            text-decoration: none;
-            font-size: 1.1rem;
-            color: white;
-            display: block;
-            border: none;
-            background: none;
-            width: 100%; 
-            box-sizing: border-box; 
-            text-align: left;
-            cursor: pointer;
-            transition: background 0.2s ease;
-        }
-
-        .sidebar a:hover, .dropdown-btn:hover {
-            background-color: var(--twitch-purple);
-        }
-
-        /* --- DROPDOWN ANIMATION --- */
-        .dropdown-container {
-            max-height: 0;
-            overflow: hidden;
-            background-color: #26262c;
-            transition: max-height 0.3s ease-out;
-        }
-        
-        .dropdown-container a {
-            padding-left: 50px;
-            font-size: 0.95rem;
-        }
-
-        .fa-caret-down {
-            float: right;
-            margin-top: 5px;
-            transition: transform 0.3s ease;
-        }
-
-        /* --- MENU BUTTON --- */
-        .menu-btn {
-            position: fixed;
-            top: calc(15px + env(safe-area-inset-top)); 
-            left: 15px;
-            font-size: 20px;
-            color: white;
-            background: var(--twitch-purple);
-            border: none;
-            width: 45px;
-            height: 45px;
-            border-radius: 10px;
-            cursor: pointer;
-            z-index: 1900;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.2s;
-        }
-
-        .menu-btn:active {
-            transform: scale(0.9);
-        }
-
-        /* --- MAIN CONTENT --- */
-        .page-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 100px 20px 40px;
-            min-height: 100vh;
-            box-sizing: border-box;
-        }
-
-        .profile-card {
-            background: rgba(41, 40, 40, 0.95); /* Added slight transparency */
-            width: 100%;
-            max-width: 450px;
-            border-radius: 16px;
-            border: 2px solid var(--twitch-purple);
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            text-align: center;
-            padding-bottom: 30px;
-            backdrop-filter: blur(5px); /* Makes the card pop against the BG */
-        }
-
-        .header-banner { background-color: var(--twitch-purple); padding: 30px 20px; display: flex; align-items: center; gap: 20px; color: white; }
-        .profile-pic { width: 80px; height: 80px; border-radius: 12px; border: 3px solid white; background: #222; }
-        .header-text h1 { margin: 0; font-size: 1.8rem; text-align: left; }
-        .header-text p { margin: 0; opacity: 0.9; font-size: 1rem; text-align: left; }
-        .tag-container { padding: 20px 20px 10px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
-        .tag { background: #f0e6ff; color: var(--twitch-purple); padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; border: 1px solid var(--twitch-purple); }
-        .bio { padding: 0 30px; color: #9146FF; font-weight: bold; line-height: 1.5; font-size: 0.95rem; }
-        .social-links { margin-top: 25px; display: flex; justify-content: center; gap: 15px; }
-        .social-icon { width: 45px; height: 45px; background: var(--twitch-purple); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.2rem; transition: transform 0.2s, background 0.2s; }
-        .social-icon:hover { transform: translateY(-3px); background: #772ce8; }
-
-        #overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1950;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(2px);
-        }
-    </style>
-</head>
-<body>
-
-    <button class="menu-btn" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-    </button>
-
-    <div id="overlay" onclick="toggleSidebar()"></div>
-
-    <div id="mySidebar" class="sidebar">
-        <div class="sidebar-header">
-            <button class="close-menu" onclick="toggleSidebar()"><i class="fas fa-times"></i></button>
-        </div>
-        
-        <div class="nav-content">
-            <a href="https://nitthenat.com/"><i class="fas fa-home"></i> Home</a>
-            
-            <button class="dropdown-btn">
-                <i class="fas fa-newspaper"></i> Whats new? <i class="fa fa-caret-down"></i>
-            </button>
-            <div class="dropdown-container">
-                <a href="https://nitthenat.com/mkw100">100% Speedrun</a>
-            </div>
-            
-            <a href="https://twitch.tv/nitthenat"><i class="fab fa-twitch"></i> Twitch</a>
+        <div class="header-text">
+            <h1>Nathaniel</h1>
+            <p>@NitTheNat</p>
         </div>
     </div>
 
-    <div class="page-wrapper">
-        <div class="profile-card">
-            <div class="header-banner">
-                <img src="https://static-cdn.jtvnw.net/jtv_user_pictures/55d25e67-8952-4674-8a9b-778895aa2d04-profile_image-70x70.png" alt="NiTTHeNat" class="profile-pic">
-                <div class="header-text">
-                    <h1>Nathaniel</h1>
-                    <p>@NitTheNat</p>
-                </div>
-            </div>
-
-            <div class="tag-container">
-                <span class="tag">AL Staff</span>
-                <span class="tag">ARC Team Member</span>
-                <span class="tag">TM Team Member</span>
-                <span class="tag">Speedrunner</span>
-                <span class="tag">Streamer</span>
-            </div>
-
-            <div class="bio">
-                <p>Funny goofy streamer, whose chair has wheels. Heavily involved in the competitive Mario Kart scene.</p>
-            </div>
-
-            <div class="social-links">
-                <a href="https://twitch.tv/nitthenat" class="social-icon"><i class="fab fa-twitch"></i></a>
-                <a href="https://x.com/nitthenat_" class="social-icon"><i class="fab fa-twitter"></i></a>
-                <a href="https://discord.nitthenat.com" class="social-icon"><i class="fab fa-discord"></i></a>
-            </div>
-        </div>
+    <div class="tag-container">
+        <span class="tag">AL Staff</span>
+        <span class="tag">ARC Team Member</span>
+        <span class="tag">TM Team Member</span>
+        <span class="tag">Speedrunner</span>
+        <span class="tag">Streamer</span>
     </div>
 
-    <script>
-        function toggleSidebar() {
-            const sb = document.getElementById("mySidebar");
-            const overlay = document.getElementById("overlay");
-            const isOpen = sb.classList.contains("active");
+    <div class="bio">
+        <p>
+            Funny goofy streamer, whose chair has wheels.
+            Heavily involved in the competitive Mario Kart scene.
+        </p>
+    </div>
 
-            if(isOpen) {
-                sb.classList.remove("active");
-                overlay.style.display = "none";
-            } else {
-                sb.classList.add("active");
-                overlay.style.display = "block";
-            }
-        }
+    <div class="social-links">
+        <a href="https://twitch.tv/nitthenat" class="social-icon">
+            <i class="fab fa-twitch"></i>
+        </a>
+        <a href="https://x.com/nitthenat_" class="social-icon">
+            <i class="fab fa-twitter"></i>
+        </a>
+        <a href="https://discord.nitthenat.com" class="social-icon">
+            <i class="fab fa-discord"></i>
+        </a>
+    </div>
+</div>
 
-        var dropdowns = document.getElementsByClassName("dropdown-btn");
-        for (var i = 0; i < dropdowns.length; i++) {
-            dropdowns[i].addEventListener("click", function() {
-                var container = this.nextElementSibling;
-                const icon = this.querySelector('.fa-caret-down');
-                
-                if (!container.style.maxHeight || container.style.maxHeight === "0px") {
-                    container.style.maxHeight = container.scrollHeight + "px";
-                    icon.style.transform = "rotate(180deg)";
-                } else {
-                    container.style.maxHeight = "0px";
-                    icon.style.transform = "rotate(0deg)";
-                }
-            });
-        }
-    </script>
-</body>
-</html>
+{% endblock %}

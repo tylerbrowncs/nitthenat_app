@@ -25,7 +25,7 @@ def home():
     return render_template("home.html")
 
 @app.route("/mkw100")
-def speedrun_post():
+def mkw100():
     return render_template("100percentMKW.html")
 
 @app.route('/r/<key>')
@@ -68,6 +68,6 @@ def add_link():
 
 @app.route("/image/offline")
 def imgoff():
-    return send_file("templates/background.png")
+    return send_file("static/images/offline.png")
 if __name__ == "__main__":
     app.run(debug=True)

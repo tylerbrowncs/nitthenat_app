@@ -1,308 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>NitTheNat | MKWorld 100%</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --twitch-purple: #9146FF;
-            --twitch-dark: #18181b;
-            --bg-gray: #2c2c2e; 
-            --sidebar-width: 280px;
-        }
+{% extends "base.html" %}
 
-        /* Base Page Setup */
-        html, body {
-            overflow-x: hidden;
-            margin: 0;
-            padding: 0;
-            width: 100%;
-        }
+{% block title %}NitTheNat | MKWorld 100%{% endblock %}
 
-        body {
-            background-color: var(--bg-gray); 
-            font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+{% block content %}
 
-        /* --- SIDEBAR STYLES --- */
-        .sidebar {
-            height: 100%;
-            width: var(--sidebar-width);
-            position: fixed;
-            z-index: 2000;
-            top: 0;
-            left: 0;
-            background-color: var(--twitch-dark);
-            transform: translateX(-100%); 
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            padding-top: 20px;
-            box-shadow: 5px 0 15px rgba(0,0,0,0.5);
-            overflow-x: hidden; 
-            box-sizing: border-box;
-        }
-
-        .sidebar.active {
-            transform: translateX(0);
-        }
-
-        .sidebar-header {
-            display: flex;
-            justify-content: flex-end;
-            padding: 10px 20px;
-        }
-
-        .close-menu {
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            background: none;
-            border: none;
-        }
-
-        .nav-content {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-        }
-
-        .sidebar a, .dropdown-btn {
-            padding: 15px 25px;
-            text-decoration: none;
-            font-size: 1.1rem;
-            color: white;
-            display: block;
-            border: none;
-            background: none;
-            width: 100%; 
-            box-sizing: border-box; 
-            text-align: left;
-            cursor: pointer;
-            transition: background 0.2s ease;
-        }
-
-        .sidebar a:hover, .dropdown-btn:hover {
-            background-color: var(--twitch-purple);
-        }
-
-        .dropdown-container {
-            max-height: 0;
-            overflow: hidden;
-            background-color: #26262c;
-            transition: max-height 0.3s ease-out;
-        }
-        
-        .dropdown-container a {
-            padding-left: 50px;
-            font-size: 0.95rem;
-        }
-
-        .fa-caret-down {
-            float: right;
-            margin-top: 5px;
-            transition: transform 0.3s ease;
-        }
-
-        /* --- MENU BUTTON --- */
-        .menu-btn {
-            position: fixed;
-            top: calc(15px + env(safe-area-inset-top)); 
-            left: 15px;
-            font-size: 20px;
-            color: white;
-            background: var(--twitch-purple);
-            border: none;
-            width: 45px;
-            height: 45px;
-            border-radius: 10px;
-            cursor: pointer;
-            z-index: 1900;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-
-        #overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1950;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(2px);
-        }
-
-        /* --- CONTENT STYLES --- */
-        .hero-banner {
-            width: 100%;
-            height: 400px;
-            background-image: linear-gradient(to bottom, rgba(0,0,0,0.2), #2c2c2e), 
-                              url('https://preview.redd.it/mario-kart-world-3440x1440-v0-ach8jf6n8tse1.png?width=5120&format=png&auto=webp&s=940b3ad5ffc0888442ff41575ce3d9ca192957f1'); 
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .hero-banner h1 {
-            font-size: 3rem;
-            text-transform: uppercase;
-            letter-spacing: 5px;
-            text-shadow: 0 5px 15px rgba(0,0,0,0.6);
-            margin: 0;
-            text-align: center;
-            padding: 0 20px;
-        }
-
-        .content-panel {
-            max-width: 850px;
-            width: 90%;
-            background-color: #1a1a1c; 
-            margin-top: -60px; 
-            margin-bottom: 50px;
-            padding: 50px;
-            border-radius: 24px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            border: 1px solid #3a3a3c;
-            box-sizing: border-box;
-            position: relative;
-            z-index: 5;
-        }
-
-        .content-panel h2 {
-            color: #8a3ffc; 
-            font-size: 2rem;
-            margin-top: 0;
-            border-bottom: 2px solid #333;
-            padding-bottom: 15px;
-        }
-
-        .content-panel p {
-            line-height: 1.6;
-            color: #d1d1d1;
-            font-size: 1.1rem;
-        }
-
-        .rule-list {
-            list-style: none;
-            padding: 0;
-            margin-top: 20px;
-        }
-
-        .rule-list li {
-            margin-bottom: 10px;
-            padding-left: 30px;
-            position: relative;
-            line-height: 1.4;
-        }
-
-        .rule-list li::before {
-            content: "•";
-            color: #8a3ffc;
-            font-weight: bold;
-            position: absolute;
-            left: 0;
-            font-size: 1.5rem;
-            top: -2px;
-        }
-
-        .list-subhead {
-            color: #ffffff;
-            font-weight: bold;
-            margin: 20px 0 10px 0 !important;
-            padding-left: 0 !important;
-            text-decoration: underline;
-            text-underline-offset: 4px;
-        }
-        
-        .list-subhead::before { content: "" !important; }
-
-        .ad-container {
-            text-align: center;
-            margin: 40px 0 60px 0;
-            width: 100%;
-        }
-
-        .back-link {
-            display: inline-block;
-            margin-bottom: 20px;
-            color: #8a3ffc;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-        .back-link:hover { text-decoration: underline; }
-
-        a { color: #8a3ffc; text-decoration: none; }
-        a:hover { text-decoration: underline; }
-
-        /* Responsive tweak for mobile title */
-        @media (max-width: 600px) {
-            .hero-banner h1 { font-size: 1.8rem; }
-            .content-panel { padding: 30px 20px; }
-        }
-    </style>
-</head>
-<body>
-
-    <button class="menu-btn" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-    </button>
-
-    <div id="overlay" onclick="toggleSidebar()"></div>
-
-    <div id="mySidebar" class="sidebar">
-        <div class="sidebar-header">
-            <button class="close-menu" onclick="toggleSidebar()"><i class="fas fa-times"></i></button>
-        </div>
-        
-        <div class="nav-content">
-            <a href="https://nitthenat.com/"><i class="fas fa-home"></i> Home</a>
-            
-            <button class="dropdown-btn">
-                <i class="fas fa-newspaper"></i> Whats new? <i class="fa fa-caret-down"></i>
-            </button>
-            <div class="dropdown-container">
-                <a href="https://nitthenat.com/mkw100">100% Speedrun</a>
-            </div>
-
-            <a href="https://twitch.tv/nitthenat"><i class="fab fa-twitch"></i> Twitch</a>
-        </div>
-    </div>
+<div class="mkw-page">
 
     <header class="hero-banner">
         <h1>MarioKart World 100% Speedrun</h1>
     </header>
 
     <main class="content-panel">
-        <a href="https://nitthenat.com/" class="back-link">← Home</a>
-        
+
+        <a href="{{ url_for('home') }}" class="back-link">← Home</a>
+
         <h2>NitTheNat's MKWorld 100% Speedrun 2026</h2>
-        
-        <p>8 Months ago, I completed the first Speedrun of Mario Kart World 100%. Since then, the run has been beat, and the game has gone through both strat changes and updates.</p>
-            
-        <p>Starting on <a href="https://www.inyourowntime.zone/2026-02-21_16.30_Europe.London">February 21st at 5pm UK / 12pm EST</a>, we go again, hopefully to reclaim the record! 🍻</p>
+
+        <p>
+            8 Months ago, I completed the first Speedrun of Mario Kart World 100%.
+            Since then, the run has been beat, and the game has gone through both strat changes and updates.
+        </p>
+
+        <p>
+            Starting on
+            <a href="https://www.inyourowntime.zone/2026-02-21_16.30_Europe.London" target="_blank">
+                February 21st at 5pm UK / 12pm EST
+            </a>,
+            we go again, hopefully to reclaim the record! 🍻
+        </p>
 
         <p><strong>Everything needed to 100%:</strong></p>
-        
+
         <ul class="rule-list">
             <li>3 Star all cups in 150cc & Mirror mode.</li>
             <li>3 Star all knockout tours in 150cc & Mirror mode.</li>
             <li>Unlock all characters & costumes.</li>
             <li>Unlock all karts & bikes.</li>
             <li>Beat all staff ghosts in time trials.</li>
-            
+
             <li class="list-subhead">Collect Every Sticker:</li>
-            
+
             <li>Complete all 394 P-Switches.</li>
             <li>Find all 150 ? Panels.</li>
             <li>Collect all 200 Peach Medallions.</li>
@@ -314,46 +51,17 @@
             <li>Catch Nabbit once in free mode.</li>
             <li>Do the "Chargin' Chuck Challenge" once in free roam.</li>
         </ul>
-        <br>
-        <p><strong>Past Attempt: </strong>2D 8H 38M 16S</p>
-        <p> <strong>Current Record: </strong>1D 19H 57M 36S</p>
+
+        <p><strong>Past Attempt:</strong> 2D 8H 38M 16S</p>
+        <p><strong>Current Record:</strong> 1D 19H 57M 36S</p>
+
         <p style="margin-top:30px;">See you there!</p>
-        <p style="margin-top:30px;">- Nat</p>
-        <a href="https://twitch.tv/nitthenat" class="back-link">Twitch</a>
-        <br>
+        <p>- Nat</p>
+
+        <a href="https://twitch.tv/nitthenat" class="back-link" target="_blank">Twitch</a>
+
     </main>
-    <br>
 
-    <script>
-        function toggleSidebar() {
-            const sb = document.getElementById("mySidebar");
-            const overlay = document.getElementById("overlay");
-            const isOpen = sb.classList.contains("active");
+</div>
 
-            if(isOpen) {
-                sb.classList.remove("active");
-                overlay.style.display = "none";
-            } else {
-                sb.classList.add("active");
-                overlay.style.display = "block";
-            }
-        }
-
-        var dropdowns = document.getElementsByClassName("dropdown-btn");
-        for (var i = 0; i < dropdowns.length; i++) {
-            dropdowns[i].addEventListener("click", function() {
-                var container = this.nextElementSibling;
-                const icon = this.querySelector('.fa-caret-down');
-                
-                if (!container.style.maxHeight || container.style.maxHeight === "0px") {
-                    container.style.maxHeight = container.scrollHeight + "px";
-                    icon.style.transform = "rotate(180deg)";
-                } else {
-                    container.style.maxHeight = "0px";
-                    icon.style.transform = "rotate(0deg)";
-                }
-            });
-        }
-    </script>
-</body>
-</html>
+{% endblock %}
