@@ -5,24 +5,6 @@ import json, os
 
 app = Flask(__name__)
 
-# --- CONFIGURATION ---
-LINKS_FILE = "links.txt"
-SECRET_PIN = "o5Z6u>F7iD9a"  # Change this to your desired PIN
-# ---------------------
-
-def get_destinations():
-    links = {}
-    try:
-        with open(LINKS_FILE, "r") as f:
-            for line in f:
-                if "," in line:
-                    name, url = line.strip().split(",", 1)
-                    links[name] = url
-    except FileNotFoundError:
-        open(LINKS_FILE, "a").close() # Create it if it doesn't exist
-    return links
-
-
 @app.route("/")
 def home():
     return render_template("home.html")
