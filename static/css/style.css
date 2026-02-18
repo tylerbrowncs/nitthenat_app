@@ -93,6 +93,7 @@ body {
     text-align: left;
     cursor: pointer;
     transition: background 0.2s ease;
+    box-sizing: border-box; 
 }
 
 .sidebar a:hover,
