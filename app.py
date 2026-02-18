@@ -1,5 +1,8 @@
 from flask import Flask, redirect, request, render_template_string, render_template, send_file
 
+from utilities.generator_urls import generate_string
+import json, os
+
 app = Flask(__name__)
 
 # --- CONFIGURATION ---
@@ -28,42 +31,6 @@ def home():
 def mkw100():
     return render_template("100percentMKW.html")
 
-@app.route('/r/<key>')
-def reverse_proxy(key):
-    data = get_destinations()
-    if key in data:
-        return redirect(data[key])
-    #return f"Shortcut '{key}' not found", 404
-
-
-@app.route('/add', methods=['GET', 'POST'])
-def add_link():
-    message = ""
-    if request.method == 'POST':
-        name = request.form.get('name')
-        url = request.form.get('url')
-        pin = request.form.get('pin')
-
-        if pin == SECRET_PIN:
-            if name and url:
-                with open(LINKS_FILE, "a") as f:
-                    f.write(f"{name},{url}\n")
-                message = f"Successfully added {name}!"
-            else:
-                message = "Please fill in all fields."
-        else:
-            message = "Incorrect PIN!"
-
-    return render_template_string('''
-        <h1>Add Shortcut</h1>
-        <p style="color: red;">{{ message }}</p>
-        <form method="post">
-            Name: <input type="text" name="name" placeholder="Youtube"><br><br>
-            URL: <input type="text" name="url" placeholder="https://youtube.com/..."><br><br>
-            PIN: <input type="password" name="pin"><br><br>
-            <input type="submit" value="Add Link">
-        </form>
-    ''', message=message)
 
 
 @app.route("/image/offline")
@@ -71,3 +38,53 @@ def imgoff():
     return send_file("static/images/offline.png")
 if __name__ == "__main__":
     app.run(debug=True)
+
+#
+#
+#   URL SHORTENER
+#
+#
+
+URL_FILE = "urls.json"
+
+def load_urls():
+    if not os.path.exists(URL_FILE):
+        return {}
+    with open(URL_FILE, "r") as f:
+        return json.load(f)
+
+def save_urls(data):
+    with open(URL_FILE, "w") as f:
+        json.dump(data, f, indent=4)
+
+@app.route("/shorten", methods=["GET", "POST"])
+def shorten():
+    short_url = None
+
+    if request.method == "POST":
+        original_url = request.form.get("url")
+
+        if original_url:
+            urls = load_urls()
+
+            code = generate_string(len(urls))
+
+            # Prevent duplicate code collision
+            while code in urls:
+                code = generate_string(len(urls))
+
+            urls[code] = original_url
+            save_urls(urls)
+
+            short_url = "https://nitthenat.com/r/" + code
+
+    return render_template("shorten.html", short_url=short_url)
+
+@app.route('/r/<code>')
+def reverse_proxy(code):
+    urls = load_urls()
+
+    if code in urls:
+        return redirect(urls[code])
+    else:
+        return render_template("404.html"), 404

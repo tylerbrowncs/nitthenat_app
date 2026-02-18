@@ -3,3 +3,4 @@ __pychche__/
 *.pyc
 .env
 links.txt
+urls.json
