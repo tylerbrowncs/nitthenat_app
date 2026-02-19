@@ -1,6 +1,8 @@
-from flask import Flask, redirect, request, render_template_string, render_template, send_file
+from flask import Flask, current_app,redirect, request, render_template_string, render_template, send_file
 
 from utilities.generator_urls import generate_string
+from utilities.table_generator import generate_war_image
+from utilities.countires import COUNTRY_CODES, COUNTRY_NAMES
 import json, os
 
 app = Flask(__name__)
@@ -24,19 +26,11 @@ def imgoff():
 def imgprof():
     return send_file("static/images/profile.png")
 
-
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
-
-
-
-#
+#######################################
 #
 #   URL SHORTENER
 #
-#
+########################################
 
 URL_FILE = "urls.json"
 
@@ -81,3 +75,82 @@ def reverse_proxy(code):
         return redirect(urls[code])
     else:
         return render_template("404.html"), 404
+    
+
+#######################################
+#
+#   Table Generator
+#
+#######################################
+
+@app.route('/mk-tablemaker/6v6', methods=["GET", "POST"])
+def mktable6v6():
+    app.logger.info(len(os.listdir("static/images/tables")))
+    file_path_table = None
+
+    if request.method == "POST":
+        app.logger.info(len(os.listdir("static/images/tables")))
+
+        team1 = {}
+
+        team1["name"] = request.form.get(f"team1_name")
+        team1["icon"] = request.form.get(f"team1_icon")
+
+        team1["members"] = [
+            {"name": request.form.get(f"team1_p{i}_name"), 
+             "country": COUNTRY_CODES[COUNTRY_NAMES.index(request.form.get(f"team1_p{i}_country"))],
+             "score": int(request.form.get(f"team1_p{i}_score"))
+            } 
+            
+            for i in range(6)]
+        
+
+        team2 = {}
+
+        team2["name"] = request.form.get(f"team2_name")
+        team2["icon"] = request.form.get(f"team2_icon")
+
+        team2["members"] = [
+            {"name": request.form.get(f"team2_p{i}_name"), 
+             "country": COUNTRY_CODES[COUNTRY_NAMES.index(request.form.get(f"team2_p{i}_country"))],
+             "score": int(request.form.get(f"team2_p{i}_score"))
+            } 
+            
+            for i in range(6)]
+        
+        data = {
+            "teams":[team1, team2]
+        }
+
+        base_dir = current_app.root_path
+
+        filename = generate_string(
+            len(os.listdir(os.path.join(base_dir, "static", "images", "tables")))
+        ) + ".png"
+
+        file_path_table = os.path.join(
+            base_dir,
+            "static",
+            "images",
+            "tables",
+            filename
+        )
+
+        generate_war_image(data, file_path_table)
+        return redirect("/table/" + filename)
+
+    return render_template("mktablemaker-6v6.html", COUNTRY_NAMES=COUNTRY_NAMES)
+
+@app.route("/table/<image>")
+def table(image):
+    return send_file("static/images/tables/"+image)
+
+
+#######################################
+#######################################
+#######################################
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
+

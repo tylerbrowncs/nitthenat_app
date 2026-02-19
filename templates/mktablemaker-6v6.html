@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}NitTheNat | 6v6 Table{% endblock %}
+
+{% block content %}
+
+<div class="mkw-page">
+
+    <header class="hero-banner">
+        <h1>Table Generator</h1>
+    </header>
+
+    <main class="content-panel">
+
+        <a href="{{ url_for('home') }}" class="back-link">← Home</a>
+
+        <h2>6v6 War Table Generator</h2>
+
+        <form method="POST">
+            <h3> Team 1 </h3>
+
+            <input 
+                type="text" 
+                name="team1_name"
+                placeholder="Team Name"
+                required
+            >
+
+            <br>
+            <input 
+                type="URL" 
+                name="team1_icon"
+                placeholder="Team Icon URL"
+                required
+            >
+            <br>
+            {% for i in range(6) %}
+                <br>
+                <input
+                    type="text"
+                    name="team1_p{{ i }}_name"
+                    placeholder="Player Name"
+                    required
+                >
+                <input
+                    type="Number"
+                    name="team1_p{{ i }}_score"
+                    placeholder="Player Score"
+                    required
+                >
+
+                <select name="team1_p{{ i }}_country" class="searchable">
+                    <option></option>
+                    {% for country in COUNTRY_NAMES %}
+                        <option value="{{ country }}">{{ country }}</option>
+                    {% endfor %}
+                    
+                </select>
+
+            {% endfor %}
+
+
+            <h3> Team 2 </h3>
+
+            <input 
+                type="text" 
+                name="team2_name"
+                placeholder="Team Name"
+                required
+            >
+
+            <br>
+            <input 
+                type="URL" 
+                name="team2_icon"
+                placeholder="Team Icon URL"
+                required
+            >
+            <br>
+            {% for i in range(6) %}
+                <br>
+                <input
+                    type="text"
+                    name="team2_p{{ i }}_name"
+                    placeholder="Player Name"
+                    required
+                >
+                <input
+                    type="Number"
+                    name="team2_p{{ i }}_score"
+                    placeholder="Player Score"
+                    required
+                >
+
+                <select name="team2_p{{ i }}_country" class="searchable">
+                    <option></option>
+                    {% for country in COUNTRY_NAMES %}
+                        <option value="{{ country }}">{{ country }}</option>
+                    {% endfor %}
+                    
+                </select>
+
+            {% endfor %}
+
+                <br>
+                <button type="submit">Create</button>
+
+        </form>
+
+        
+
+
+
+    </main>
+
+</div>
+
+<script>
+    $('.searchable').select2({
+    placeholder: "Select a country",
+    allowClear: false,
+    width: '200px'
+});
+</script>
+
+{% endblock %}
+
+
