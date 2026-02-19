@@ -1,12 +1,15 @@
-import requests, os
+import requests
+import os
 from io import BytesIO
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
+from PIL import Image, ImageDraw, ImageFont
 
+# ============================
+# THEME
+# ============================
 
 TWITCH_PURPLE = (145, 70, 255)
 TWITCH_GRAY = (40, 40, 45)
 TWITCH_DARK = (24, 24, 27)
-
 WHITE = (255, 255, 255)
 
 WIDTH = 2600
@@ -18,19 +21,62 @@ TITLE_HEIGHT = 160
 BOTTOM_PADDING = 200
 
 FLAG_SIZE = (85, 55)
-FONT_PATH = "arialbd.ttf"
 
 BACKGROUND_IMAGE_URL = "https://nitthenat.com/image/offline"
 
 SCALE = 0.4
 
+# ============================
+# CROSS PLATFORM FONT LOADER
+# ============================
+
+PROJECT_FONT_PATH = os.path.join(
+    os.path.dirname(__file__),
+    "fonts",
+    "Montserrat-Bold.ttf"  # Recommended bundled font
+)
+
+SYSTEM_FONT_PATHS = [
+    # Windows
+    "C:/Windows/Fonts/arialbd.ttf",
+    "C:/Windows/Fonts/Arialbd.ttf",
+
+    # Linux (Debian/Ubuntu)
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+
+    # Alpine
+    "/usr/share/fonts/TTF/DejaVuSans-Bold.ttf",
+
+    # Mac
+    "/System/Library/Fonts/Supplemental/Arial Bold.ttf"
+]
+
+
+def find_font():
+    if os.path.exists(PROJECT_FONT_PATH):
+        return PROJECT_FONT_PATH
+
+    for path in SYSTEM_FONT_PATHS:
+        if os.path.exists(path):
+            return path
+
+    return None
+
+
+FONT_PATH = find_font()
 
 
 def load_font(size):
-    try:
+    if FONT_PATH:
         return ImageFont.truetype(FONT_PATH, size)
-    except:
-        return ImageFont.load_default()
+
+    print("⚠ WARNING: No TrueType font found. Using default font.")
+    return ImageFont.load_default()
+
+
+# ============================
+# HELPERS
+# ============================
 
 def load_image(url):
     try:
@@ -54,19 +100,22 @@ def text_size(draw, text, font):
 
 
 def draw_medal(base, x, y, color, size=50):
-
     medal = Image.new("RGBA", (size, size), (0, 0, 0, 0))
-    draw = ImageDraw.Draw(medal)
+    d = ImageDraw.Draw(medal)
 
-    draw.polygon([(size*0.3, 0), (size*0.7, 0), (size*0.5, size*0.3)],
-                 fill=(200, 0, 0))
+    d.polygon([(size*0.3, 0), (size*0.7, 0), (size*0.5, size*0.3)],
+              fill=(200, 0, 0))
 
-    draw.ellipse([size*0.15, size*0.25,
-                  size*0.85, size*0.95],
-                 fill=color)
+    d.ellipse([size*0.15, size*0.25,
+               size*0.85, size*0.95],
+              fill=color)
 
     base.paste(medal, (x, y), medal)
 
+
+# ============================
+# MAIN GENERATOR
+# ============================
 
 def generate_war_image(data, output):
 
@@ -77,14 +126,8 @@ def generate_war_image(data, output):
 
     teams = sorted(teams, key=lambda t: t["total"], reverse=True)
 
-    all_players = []
-    for team in teams:
-        for p in team["members"]:
-            all_players.append(p)
-
-    top_players = sorted(all_players,
-                         key=lambda p: p["score"],
-                         reverse=True)[:3]
+    all_players = [p for t in teams for p in t["members"]]
+    top_players = sorted(all_players, key=lambda p: p["score"], reverse=True)[:3]
 
     medal_colors = [(255,215,0), (200,200,200), (205,127,50)]
     player_medals = {id(p): medal_colors[i] for i,p in enumerate(top_players)}
@@ -105,6 +148,7 @@ def generate_war_image(data, output):
     img = base.copy()
     draw = ImageDraw.Draw(img)
 
+    # Fonts
     title_font = load_font(135)
     team_font = load_font(85)
     player_font = load_font(80)
@@ -112,21 +156,20 @@ def generate_war_image(data, output):
     diff_font = load_font(110)
     watermark_font = load_font(26)
 
-    title_text = "WAR RESULTS"
-    title_x = WIDTH // 2
-    title_y = PADDING
+    # ================= TITLE =================
 
-    draw.text((title_x, title_y),
-              title_text,
+    draw.text((WIDTH//2, PADDING),
+              "WAR RESULTS",
               font=title_font,
               fill=TWITCH_PURPLE,
               anchor="mm",
               stroke_width=4,
-              stroke_fill=(0, 0, 0))
+              stroke_fill=(0,0,0))
 
     start_y = PADDING + TITLE_HEIGHT - 40
     panel_positions = []
 
+    # ================= TEAMS =================
 
     for i, team in enumerate(teams):
 
@@ -136,53 +179,39 @@ def generate_war_image(data, output):
 
         radius = 60
 
-        panel = Image.new("RGBA",
-                          (col_width, panel_height),
-                          TWITCH_GRAY + (255,))
+        panel = Image.new("RGBA", (col_width, panel_height), TWITCH_GRAY + (255,))
 
-        if "icon" in team and team["icon"]:
+        if team.get("icon"):
             icon = load_image(team["icon"])
             if icon:
                 icon = icon.resize((col_width, panel_height))
-
-                dim_layer = Image.new(
-                    "RGBA",
-                    (col_width, panel_height),
-                    (40, 40, 45, 140)
-                )
-
-                icon = Image.alpha_composite(icon, dim_layer)
-                panel.paste(icon, (0, 0), icon)
+                dim = Image.new("RGBA", (col_width, panel_height), (40,40,45,140))
+                icon = Image.alpha_composite(icon, dim)
+                panel.paste(icon, (0,0), icon)
 
         mask = Image.new("L", (col_width, panel_height), 0)
-        mask_draw = ImageDraw.Draw(mask)
-        mask_draw.rounded_rectangle(
-            [0, 0, col_width, panel_height],
-            radius=radius,
-            fill=255
-        )
+        ImageDraw.Draw(mask).rounded_rectangle(
+            [0,0,col_width,panel_height], radius=radius, fill=255)
 
         panel.putalpha(mask)
-        img.paste(panel, (x, y), panel)
+        img.paste(panel, (x,y), panel)
 
         draw.rounded_rectangle(
-            [x, y, x+col_width, y+panel_height],
+            [x,y,x+col_width,y+panel_height],
             radius=radius,
             outline=TWITCH_PURPLE,
             width=6
         )
 
+        # Team name
         name_y = y + 75
-        name_text = team["name"]
-        name_w,_ = text_size(draw, name_text, team_font)
+        name = team["name"]
+        name_w,_ = text_size(draw, name, team_font)
 
-        draw.text((x + col_width//2, name_y),
-                  name_text,
-                  font=team_font,
-                  fill=WHITE,
-                  anchor="mm")
+        draw.text((x+col_width//2, name_y),
+                  name, font=team_font, fill=WHITE, anchor="mm")
 
-        medal_x = x + col_width//2 - (name_w // 2) - 80
+        medal_x = x + col_width//2 - (name_w//2) - 80
         medal_y = name_y - 40
 
         if i == 0:
@@ -192,16 +221,11 @@ def generate_war_image(data, output):
 
         draw.line((x+60, y+TEAM_HEADER_HEIGHT-25,
                    x+col_width-60, y+TEAM_HEADER_HEIGHT-25),
-                  fill=TWITCH_PURPLE,
-                  width=4)
-
-        members = sorted(team["members"],
-                         key=lambda p: p["score"],
-                         reverse=True)
+                  fill=TWITCH_PURPLE, width=4)
 
         py = y + TEAM_HEADER_HEIGHT
 
-        for player in members:
+        for player in sorted(team["members"], key=lambda p:p["score"], reverse=True):
 
             name = player["name"]
             score = str(player["score"])
@@ -210,31 +234,24 @@ def generate_war_image(data, output):
 
             flag = get_flag(player["country"])
             if flag:
-                flag_y = py + (ROW_HEIGHT-FLAG_SIZE[1])//2
-                img.paste(flag, (x+60, flag_y), flag)
+                img.paste(flag, (x+60, py+(ROW_HEIGHT-FLAG_SIZE[1])//2), flag)
 
             text_y = py + (ROW_HEIGHT-name_h)//2
 
             draw.text((x+180, text_y),
-                      name,
-                      font=player_font,
-                      fill=WHITE)
+                      name, font=player_font, fill=WHITE)
 
             if id(player) in player_medals:
-                medal_x = x+180 + name_w + 15
-                medal_y = text_y - 10
                 draw_medal(img,
-                           medal_x,
-                           medal_y,
+                           x+180+name_w+15,
+                           text_y-10,
                            player_medals[id(player)],
-                           size=45)
+                           45)
 
             score_w,_ = text_size(draw, score, player_font)
 
             draw.text((x+col_width-80-score_w, text_y),
-                      score,
-                      font=player_font,
-                      fill=WHITE)
+                      score, font=player_font, fill=WHITE)
 
             py += ROW_HEIGHT
 
@@ -244,9 +261,9 @@ def generate_war_image(data, output):
                   fill=WHITE,
                   anchor="mm")
 
+    # ================= DIFFERENCE =================
 
     if len(teams) == 2:
-
         diff = teams[0]["total"] - teams[1]["total"]
         diff_text = f"+{diff}" if diff > 0 else str(diff)
 
@@ -258,87 +275,47 @@ def generate_war_image(data, output):
         padding_x = 200
         padding_y = 100
 
-        box_width = text_w + padding_x
-        box_height = text_h + padding_y
+        box_w = text_w + padding_x
+        box_h = text_h + padding_y
 
-        box_center_x = (left[2] + right[0]) // 2
-        box_center_y = left[3]
+        cx = (left[2] + right[0]) // 2
+        cy = left[3]
 
-        box = [
-            box_center_x - box_width//2,
-            box_center_y - box_height//2,
-            box_center_x + box_width//2,
-            box_center_y + box_height//2
-        ]
+        box = [cx-box_w//2, cy-box_h//2,
+               cx+box_w//2, cy+box_h//2]
 
-        draw.rounded_rectangle(
-            box,
-            radius=60,
-            fill=TWITCH_GRAY,
-            outline=TWITCH_PURPLE,
-            width=6
-        )
+        draw.rounded_rectangle(box,
+                               radius=60,
+                               fill=TWITCH_GRAY,
+                               outline=TWITCH_PURPLE,
+                               width=6)
 
-        draw.text((box_center_x, box_center_y),
+        draw.text((cx, cy),
                   diff_text,
                   font=diff_font,
                   fill=WHITE,
                   anchor="mm")
 
+    # ================= WATERMARK =================
 
-    draw.text(
-        (WIDTH-40, height-30),
-        "Developed by TMoney19 | nitthenat.com",
-        font=watermark_font,
-        fill=(200, 200, 200),
-        anchor="rd",
-        stroke_width=3,
-        stroke_fill=(0, 0, 0)
-    )
+    draw.text((WIDTH-40, height-30),
+              "Developed by TMoney19 | nitthenat.com",
+              font=watermark_font,
+              fill=(200,200,200),
+              anchor="rd",
+              stroke_width=3,
+              stroke_fill=(0,0,0))
 
     final = Image.new("RGB", img.size, TWITCH_DARK)
-    final.paste(img, (0, 0))
+    final.paste(img, (0,0))
 
+    # Optional scale down
     if SCALE != 1.0:
-        new_width = int(final.width * SCALE)
-        new_height = int(final.height * SCALE)
-        final = final.resize((new_width, new_height), Image.LANCZOS)
+        final = final.resize(
+            (int(final.width*SCALE), int(final.height*SCALE)),
+            Image.LANCZOS
+        )
 
     final.save(output)
-
     print("Saved to", output)
 
-
-
-if __name__ == "__main__":
-
-    sample_data = {
-        "teams": [
-            {
-                "name": "TrivialMatters",
-                "icon": "https://media.discordapp.net/attachments/1324861899262656512/1324863245022003290/TMLogoV3test_1.png?ex=699833cc&is=6996e24c&hm=cbb57e584aeea3b56c929f5406a5fdcafbfb9aa12965729a70521d804e287152&=&format=webp&quality=lossless",
-                "members": [
-                    {"name": "Nat", "country": "gb", "score": 14},
-                    {"name": "Alex", "country": "us", "score": 140},
-                    {"name": "Liam", "country": "ca", "score": 130},
-                    {"name": "Mia", "country": "au", "score": 120},
-                    {"name": "Ethan", "country": "de", "score": 110},
-                    {"name": "Chloe", "country": "fr", "score": 100}
-                ]
-            },
-            {
-                "name": "Yoshi Nuggets",
-                "icon": "https://media.discordapp.net/attachments/1231262246873727086/1283909605138759750/logo_yn_png_mano.webp?ex=6998303f&is=6996debf&hm=83ae1d6ce299be2208b98bbc916b4c272173856c8053f32a7102e1b96b1b8bd4&=&format=webp",
-                "members": [
-                    {"name": "Hawkey", "country": "ca", "score": 160},
-                    {"name": "Chrin", "country": "us", "score": 150},
-                    {"name": "Choko", "country": "ca", "score": 140},
-                    {"name": "Sparky", "country": "pr", "score": 120},
-                    {"name": "Azusa", "country": "us", "score": 110},
-                    {"name": "May", "country": "gb", "score": 90}
-                ]
-            }
-        ]
-    }
-
-    generate_war_image(sample_data)
