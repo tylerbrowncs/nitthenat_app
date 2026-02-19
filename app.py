@@ -21,7 +21,7 @@ def imgoff():
 
 
 @app.route("/image/profile")
-def imgoff():
+def imgprof():
     return send_file("static/images/profile.png")
 
 
