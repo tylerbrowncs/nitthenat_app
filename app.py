@@ -18,8 +18,19 @@ def mkw100():
 @app.route("/image/offline")
 def imgoff():
     return send_file("static/images/offline.png")
+
+
+@app.route("/image/profile")
+def imgoff():
+    return send_file("static/images/profile.png")
+
+
+
+
 if __name__ == "__main__":
     app.run(debug=True)
+
+
 
 #
 #
