@@ -22,8 +22,6 @@ BOTTOM_PADDING = 200
 
 FLAG_SIZE = (85, 55)
 
-BACKGROUND_IMAGE_URL = "https://nitthenat.com/image/offline"
-
 SCALE = 0.4
 
 # ============================
@@ -89,10 +87,54 @@ def load_image(url):
 def get_flag(code):
     url = f"https://flagcdn.com/w80/{code.lower()}.png"
     img = load_image(url)
-    if img:
-        img.thumbnail(FLAG_SIZE)
-    return img
+    if not img:
+        return None
 
+    # 🔥 Slightly smaller so it doesn't hit the text
+    width = 100
+    height = 65
+    radius = 30
+    border = 4
+
+    # Scale to cover the oblong
+    scale = max(width / img.width, height / img.height)
+    new_w = int(img.width * scale)
+    new_h = int(img.height * scale)
+
+    img = img.resize((new_w, new_h), Image.LANCZOS)
+
+    # Center crop
+    left = (new_w - width) // 2
+    top = (new_h - height) // 2
+    img = img.crop((left, top, left + width, top + height))
+
+    # Rounded rectangle mask
+    mask = Image.new("L", (width, height), 0)
+    draw = ImageDraw.Draw(mask)
+    draw.rounded_rectangle((0, 0, width, height), radius=radius, fill=255)
+
+    img.putalpha(mask)
+
+    # White border
+    final_w = width + border * 2
+    final_h = height + border * 2
+
+    result = Image.new("RGBA", (final_w, final_h), (0, 0, 0, 0))
+
+    border_mask = Image.new("L", (final_w, final_h), 0)
+    ImageDraw.Draw(border_mask).rounded_rectangle(
+        (0, 0, final_w, final_h),
+        radius=radius + border,
+        fill=255
+    )
+
+    border_shape = Image.new("RGBA", (final_w, final_h), (255, 255, 255, 255))
+    border_shape.putalpha(border_mask)
+
+    result.paste(border_shape, (0, 0), border_shape)
+    result.paste(img, (border, border), img)
+
+    return result
 
 def text_size(draw, text, font):
     bbox = draw.textbbox((0, 0), text, font=font)
@@ -117,7 +159,7 @@ def draw_medal(base, x, y, color, size=50):
 # MAIN GENERATOR
 # ============================
 
-def generate_war_image(data, output):
+def generate_war_image(data, output, BACKGROUND_IMAGE_URL):
 
     teams = data["teams"]
 
@@ -318,4 +360,37 @@ def generate_war_image(data, output):
 
     final.save(output)
     print("Saved to", output)
+
+if __name__ == "__main__":
+
+    sample_data = {
+        "teams": [
+            {
+                "name": "TrivialMatters",
+                "icon": "https://nitthenat.com/image/profile",
+                "members": [
+                    {"name": "Nat", "country": "gb", "score": 154},
+                    {"name": "Alex", "country": "us", "score": 140},
+                    {"name": "Liam", "country": "ca", "score": 130},
+                    {"name": "Mia", "country": "au", "score": 120},
+                    {"name": "Ethan", "country": "de", "score": 110},
+                    {"name": "Chloe", "country": "fr", "score": 100}
+                ]
+            },
+            {
+                "name": "Influx",
+                "icon": "https://media.discordapp.net/attachments/1231262246873727086/1283909605138759750/logo_yn_png_mano.webp?ex=6998303f&is=6996debf&hm=83ae1d6ce299be2208b98bbc916b4c272173856c8053f32a7102e1b96b1b8bd4&=&format=webp",
+                "members": [
+                    {"name": "Hawkey", "country": "ca", "score": 160},
+                    {"name": "Chrin", "country": "us", "score": 150},
+                    {"name": "Choko", "country": "ca", "score": 140},
+                    {"name": "Sparky", "country": "pr", "score": 120},
+                    {"name": "Azusa", "country": "us", "score": 110},
+                    {"name": "May", "country": "gb", "score": 90}
+                ]
+            }
+        ]
+    }
+
+    generate_war_image(sample_data, "test.png", "https://cdn.discordapp.com/attachments/457549191263158272/1474215946309730366/i-think-we-all-need-to-take-a-second-to-appreciate-how-v0-x5kug3fylw8f1.jpg?ex=69990a17&is=6997b897&hm=b17cd34eecf396a4dc526b47509140a7989273e86bea83d5ea6916232b39d9cc&")
 
