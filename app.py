@@ -94,7 +94,7 @@ def mktable6v6():
 
         bg_url = request.form.get(f"background_url")
 
-        if bg_url == None:
+        if bg_url == "" or bg_url == None:
             bg_url = "https://nitthenat.com/image/offline"
 
         app.logger.info(bg_url)
