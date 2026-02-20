@@ -23,7 +23,7 @@ COUNTRY_CODES = [
     "va","vc","ve","vg","vi","vn","vu",
     "wf","ws",
     "ye","yt",
-    "za","zm","zw"
+    "za","zm","zw", "gb-wls", "gb-sct", "gb-nir", "gb-eng"
 ]
 
 COUNTRY_NAMES = [
@@ -51,5 +51,5 @@ COUNTRY_NAMES = [
     "Vatican City","Saint Vincent and the Grenadines","Venezuela","British Virgin Islands","U.S. Virgin Islands","Vietnam","Vanuatu",
     "Wallis and Futuna","Samoa",
     "Yemen","Mayotte",
-    "South Africa","Zambia","Zimbabwe"
+    "South Africa","Zambia","Zimbabwe", "Wales", "Scotland", "Northern Ireland", "England"
 ]

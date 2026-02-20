@@ -369,10 +369,10 @@ if __name__ == "__main__":
                 "name": "TrivialMatters",
                 "icon": "https://nitthenat.com/image/profile",
                 "members": [
-                    {"name": "Nat", "country": "gb", "score": 154},
-                    {"name": "Alex", "country": "us", "score": 140},
-                    {"name": "Liam", "country": "ca", "score": 130},
-                    {"name": "Mia", "country": "au", "score": 120},
+                    {"name": "Nat", "country": "gb-wls", "score": 154},
+                    {"name": "Alex", "country": "gb-eng", "score": 140},
+                    {"name": "Liam", "country": "gb-sct", "score": 130},
+                    {"name": "Mia", "country": "gb-nir", "score": 120},
                     {"name": "Ethan", "country": "de", "score": 110},
                     {"name": "Chloe", "country": "fr", "score": 100}
                 ]
