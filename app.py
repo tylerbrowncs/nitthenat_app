@@ -96,8 +96,11 @@ def mktable6v6():
 
         if bg_url == "" or bg_url == None:
             bg_url = "https://nitthenat.com/image/offline"
-
-        app.logger.info(bg_url)
+        
+        title = request.form.get(f"title_text")
+        if title == "":
+            title = "WAR RESULTS"
+        app.logger.info(title)
         team1 = {}
 
         team1["name"] = request.form.get(f"team1_name")
@@ -143,7 +146,7 @@ def mktable6v6():
             filename
         )
 
-        generate_war_image(data, file_path_table, bg_url)
+        generate_war_image(data, file_path_table, bg_url, title)
         return redirect("/table/" + filename)
 
     return render_template("mktablemaker-6v6.html", COUNTRY_NAMES=COUNTRY_NAMES)

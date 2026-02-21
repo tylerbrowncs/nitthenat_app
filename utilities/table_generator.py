@@ -159,7 +159,7 @@ def draw_medal(base, x, y, color, size=50):
 # MAIN GENERATOR
 # ============================
 
-def generate_war_image(data, output, BACKGROUND_IMAGE_URL):
+def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title):
 
     teams = data["teams"]
 
@@ -201,7 +201,7 @@ def generate_war_image(data, output, BACKGROUND_IMAGE_URL):
     # ================= TITLE =================
 
     draw.text((WIDTH//2, PADDING),
-              "WAR RESULTS",
+              title,
               font=title_font,
               fill=TWITCH_PURPLE,
               anchor="mm",
@@ -367,7 +367,7 @@ if __name__ == "__main__":
         "teams": [
             {
                 "name": "TrivialMatters",
-                "icon": "https://nitthenat.com/image/profile",
+                "icon": "https://cdn.discordapp.com/attachments/1231262099871633549/1281379714577203312/u44K2BWxA0zseaTzLV8wjLnfnSyBhC5Now432tHA_1.png?ex=699ad99a&is=6999881a&hm=48de30d48f79c9c38cdebfc5c231179ca6787a14e410cc9768ebb501d1b600b3&",
                 "members": [
                     {"name": "Nat", "country": "gb-wls", "score": 154},
                     {"name": "Alex", "country": "gb-eng", "score": 140},
@@ -379,7 +379,7 @@ if __name__ == "__main__":
             },
             {
                 "name": "Influx",
-                "icon": "https://media.discordapp.net/attachments/1231262246873727086/1283909605138759750/logo_yn_png_mano.webp?ex=6998303f&is=6996debf&hm=83ae1d6ce299be2208b98bbc916b4c272173856c8053f32a7102e1b96b1b8bd4&=&format=webp",
+                "icon": "https://cdn.discordapp.com/attachments/1231262099871633549/1281379714577203312/u44K2BWxA0zseaTzLV8wjLnfnSyBhC5Now432tHA_1.png?ex=699ad99a&is=6999881a&hm=48de30d48f79c9c38cdebfc5c231179ca6787a14e410cc9768ebb501d1b600b3&",
                 "members": [
                     {"name": "Hawkey", "country": "ca", "score": 160},
                     {"name": "Chrin", "country": "us", "score": 150},
@@ -392,5 +392,5 @@ if __name__ == "__main__":
         ]
     }
 
-    generate_war_image(sample_data, "test.png", "https://cdn.discordapp.com/attachments/457549191263158272/1474215946309730366/i-think-we-all-need-to-take-a-second-to-appreciate-how-v0-x5kug3fylw8f1.jpg?ex=69990a17&is=6997b897&hm=b17cd34eecf396a4dc526b47509140a7989273e86bea83d5ea6916232b39d9cc&")
+    generate_war_image(sample_data, "test.png", "https://nitthenat.com/image/offline")
 
