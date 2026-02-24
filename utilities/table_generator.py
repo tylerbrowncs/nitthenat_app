@@ -3,6 +3,8 @@ import os
 from io import BytesIO
 from PIL import Image, ImageDraw, ImageFont
 
+from datetime import datetime
+
 # ============================
 # THEME
 # ============================
@@ -21,56 +23,40 @@ TITLE_HEIGHT = 160
 BOTTOM_PADDING = 200
 
 FLAG_SIZE = (85, 55)
-
 SCALE = 0.4
 
 # ============================
-# CROSS PLATFORM FONT LOADER
+# FONT LOADER
 # ============================
 
 PROJECT_FONT_PATH = os.path.join(
     os.path.dirname(__file__),
     "fonts",
-    "Montserrat-Bold.ttf"  # Recommended bundled font
+    "Montserrat-Bold.ttf"
 )
 
 SYSTEM_FONT_PATHS = [
-    # Windows
     "C:/Windows/Fonts/arialbd.ttf",
     "C:/Windows/Fonts/Arialbd.ttf",
-
-    # Linux (Debian/Ubuntu)
     "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
-
-    # Alpine
     "/usr/share/fonts/TTF/DejaVuSans-Bold.ttf",
-
-    # Mac
     "/System/Library/Fonts/Supplemental/Arial Bold.ttf"
 ]
-
 
 def find_font():
     if os.path.exists(PROJECT_FONT_PATH):
         return PROJECT_FONT_PATH
-
     for path in SYSTEM_FONT_PATHS:
         if os.path.exists(path):
             return path
-
     return None
 
-
 FONT_PATH = find_font()
-
 
 def load_font(size):
     if FONT_PATH:
         return ImageFont.truetype(FONT_PATH, size)
-
-    print("⚠ WARNING: No TrueType font found. Using default font.")
     return ImageFont.load_default()
-
 
 # ============================
 # HELPERS
@@ -83,39 +69,35 @@ def load_image(url):
     except:
         return None
 
-
 def get_flag(code):
     url = f"https://flagcdn.com/w80/{code.lower()}.png"
     img = load_image(url)
     if not img:
         return None
 
-    # 🔥 Slightly smaller so it doesn't hit the text
     width = 100
     height = 65
     radius = 30
     border = 4
 
-    # Scale to cover the oblong
     scale = max(width / img.width, height / img.height)
-    new_w = int(img.width * scale)
-    new_h = int(img.height * scale)
+    img = img.resize(
+        (int(img.width * scale), int(img.height * scale)),
+        Image.LANCZOS
+    )
 
-    img = img.resize((new_w, new_h), Image.LANCZOS)
-
-    # Center crop
-    left = (new_w - width) // 2
-    top = (new_h - height) // 2
+    left = (img.width - width) // 2
+    top = (img.height - height) // 2
     img = img.crop((left, top, left + width, top + height))
 
-    # Rounded rectangle mask
     mask = Image.new("L", (width, height), 0)
-    draw = ImageDraw.Draw(mask)
-    draw.rounded_rectangle((0, 0, width, height), radius=radius, fill=255)
-
+    ImageDraw.Draw(mask).rounded_rectangle(
+        (0, 0, width, height),
+        radius=radius,
+        fill=255
+    )
     img.putalpha(mask)
 
-    # White border
     final_w = width + border * 2
     final_h = height + border * 2
 
@@ -140,26 +122,22 @@ def text_size(draw, text, font):
     bbox = draw.textbbox((0, 0), text, font=font)
     return bbox[2] - bbox[0], bbox[3] - bbox[1]
 
-
 def draw_medal(base, x, y, color, size=50):
     medal = Image.new("RGBA", (size, size), (0, 0, 0, 0))
     d = ImageDraw.Draw(medal)
 
     d.polygon([(size*0.3, 0), (size*0.7, 0), (size*0.5, size*0.3)],
               fill=(200, 0, 0))
-
-    d.ellipse([size*0.15, size*0.25,
-               size*0.85, size*0.95],
+    d.ellipse([size*0.15, size*0.25, size*0.85, size*0.95],
               fill=color)
 
     base.paste(medal, (x, y), medal)
-
 
 # ============================
 # MAIN GENERATOR
 # ============================
 
-def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title):
+def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title, sub_text=datetime.now().strftime("%b %d, %Y")):
 
     teams = data["teams"]
 
@@ -190,28 +168,31 @@ def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title):
     img = base.copy()
     draw = ImageDraw.Draw(img)
 
-    # Fonts
-    title_font = load_font(135)
-    team_font = load_font(85)
+    title_font = load_font(115)
+    team_font = load_font(75)
     player_font = load_font(80)
     total_font = load_font(170)
     diff_font = load_font(110)
     watermark_font = load_font(26)
+    date_font = load_font(40)
 
-    # ================= TITLE =================
-
-    draw.text((WIDTH//2, PADDING),
-              title,
+    draw.text((WIDTH//2, PADDING-25), title,
               font=title_font,
               fill=TWITCH_PURPLE,
               anchor="mm",
               stroke_width=4,
               stroke_fill=(0,0,0))
+    
 
+    draw.text((WIDTH//2, PADDING+60), sub_text,
+              font=date_font,
+              fill=WHITE,
+              anchor="mm",
+              stroke_width=4,
+              stroke_fill=(0,0,0))
+    
     start_y = PADDING + TITLE_HEIGHT - 40
     panel_positions = []
-
-    # ================= TEAMS =================
 
     for i, team in enumerate(teams):
 
@@ -221,31 +202,35 @@ def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title):
 
         radius = 60
 
-        panel = Image.new("RGBA", (col_width, panel_height), TWITCH_GRAY + (255,))
+        panel = Image.new("RGBA", (col_width, panel_height), (0,0,0,0))
 
         if team.get("icon"):
             icon = load_image(team["icon"])
             if icon:
-                icon = icon.resize((col_width, panel_height))
-                dim = Image.new("RGBA", (col_width, panel_height), (40,40,45,140))
-                icon = Image.alpha_composite(icon, dim)
+                icon = icon.resize((col_width, panel_height), Image.LANCZOS)
+                overlay = Image.new("RGBA", icon.size, (40,40,45,200))
+                icon = Image.alpha_composite(icon, overlay)
                 panel.paste(icon, (0,0), icon)
 
         mask = Image.new("L", (col_width, panel_height), 0)
         ImageDraw.Draw(mask).rounded_rectangle(
-            [0,0,col_width,panel_height], radius=radius, fill=255)
-
-        panel.putalpha(mask)
-        img.paste(panel, (x,y), panel)
-
-        draw.rounded_rectangle(
-            [x,y,x+col_width,y+panel_height],
+            [0,0,col_width,panel_height],
             radius=radius,
-            outline=TWITCH_PURPLE,
-            width=6
+            fill=255
         )
 
-        # Team name
+        rounded_panel = Image.new("RGBA", (col_width, panel_height))
+        rounded_panel.paste(panel, (0,0), mask)
+
+        img.paste(rounded_panel, (x,y), rounded_panel)
+
+        draw.rounded_rectangle(
+             [x,y,x+col_width,y+panel_height],
+             radius=radius,
+             outline=TWITCH_PURPLE,
+             width=6
+         )
+
         name_y = y + 75
         name = team["name"]
         name_w,_ = text_size(draw, name, team_font)
@@ -303,8 +288,6 @@ def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title):
                   fill=WHITE,
                   anchor="mm")
 
-    # ================= DIFFERENCE =================
-
     if len(teams) == 2:
         diff = teams[0]["total"] - teams[1]["total"]
         diff_text = f"+{diff}" if diff > 0 else str(diff)
@@ -338,8 +321,6 @@ def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title):
                   fill=WHITE,
                   anchor="mm")
 
-    # ================= WATERMARK =================
-
     draw.text((WIDTH-40, height-30),
               "Developed by TMoney19 | nitthenat.com",
               font=watermark_font,
@@ -348,18 +329,24 @@ def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title):
               stroke_width=3,
               stroke_fill=(0,0,0))
 
-    final = Image.new("RGB", img.size, TWITCH_DARK)
-    final.paste(img, (0,0))
+    final = img
 
-    # Optional scale down
     if SCALE != 1.0:
         final = final.resize(
             (int(final.width*SCALE), int(final.height*SCALE)),
             Image.LANCZOS
         )
 
+    # Remove transparency completely
+    final = final.convert("RGB")
+
     final.save(output)
     print("Saved to", output)
+
+
+# ============================
+# TEST
+# ============================
 
 if __name__ == "__main__":
 
@@ -367,7 +354,7 @@ if __name__ == "__main__":
         "teams": [
             {
                 "name": "TrivialMatters",
-                "icon": "https://cdn.discordapp.com/attachments/1231262099871633549/1281379714577203312/u44K2BWxA0zseaTzLV8wjLnfnSyBhC5Now432tHA_1.png?ex=699ad99a&is=6999881a&hm=48de30d48f79c9c38cdebfc5c231179ca6787a14e410cc9768ebb501d1b600b3&",
+                "icon": "https://media.discordapp.net/attachments/1231262099871633549/1281379714577203312/u44K2BWxA0zseaTzLV8wjLnfnSyBhC5Now432tHA_1.png?ex=699e255a&is=699cd3da&hm=839a8a503ccb8bcf6355f71618cc9d8d59c12dc700a3d4a922e8d38bdeff0318&=&format=webp&quality=lossless",
                 "members": [
                     {"name": "Nat", "country": "gb-wls", "score": 154},
                     {"name": "Alex", "country": "gb-eng", "score": 140},
@@ -379,10 +366,10 @@ if __name__ == "__main__":
             },
             {
                 "name": "Influx",
-                "icon": "https://cdn.discordapp.com/attachments/1231262099871633549/1281379714577203312/u44K2BWxA0zseaTzLV8wjLnfnSyBhC5Now432tHA_1.png?ex=699ad99a&is=6999881a&hm=48de30d48f79c9c38cdebfc5c231179ca6787a14e410cc9768ebb501d1b600b3&",
+                "icon": "https://media.discordapp.net/attachments/1324872676074061864/1324873171597525003/mTFB7Expbp6dXI9A9JK3Q0U61besy0wEZM5aZmtE.png?ex=699e2bcb&is=699cda4b&hm=eacdc83d6c9c7716a7faed558030e89def8e6d82af153c88ebf7fbeeb7c2a948&=&format=webp&quality=lossless",
                 "members": [
                     {"name": "Hawkey", "country": "ca", "score": 160},
-                    {"name": "Chrin", "country": "us", "score": 150},
+                    {"name": "Chrin", "country": "us", "score": 1350},
                     {"name": "Choko", "country": "ca", "score": 140},
                     {"name": "Sparky", "country": "pr", "score": 120},
                     {"name": "Azusa", "country": "us", "score": 110},
@@ -392,5 +379,5 @@ if __name__ == "__main__":
         ]
     }
 
-    generate_war_image(sample_data, "test.png", "https://nitthenat.com/image/offline")
+    generate_war_image(sample_data, "test.png", "https://catwithmonocle.com/wp-content/uploads/2023/04/smb-movie-mario-kart-3840x2160-1.jpg", "TM vs Influx | #1921")
 

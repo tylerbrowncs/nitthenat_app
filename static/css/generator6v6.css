@@ -12,7 +12,7 @@ form {
 /*        HEADINGS           */
 /* ========================= */
 
-form h3 {
+h3 {
     margin-top: 30px;
     margin-bottom: 15px;
     color: var(--twitch-purple);
@@ -182,4 +182,14 @@ form button {
 form button:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(145, 70, 255, 0.4);
+}
+
+.result {
+  width: 95%;        /* fills most of parent */
+  max-width: 100%;   /* never overflow */
+  height: auto;      /* keep aspect ratio */
+  display: block;    /* remove inline spacing */
+  margin: 1rem auto; /* center + wiggle room */
+  border:#772ce8 5px solid;
+  border-radius: 16px;
 }

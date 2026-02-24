@@ -18,10 +18,17 @@
     </header>
 
     <main class="content-panel">
+         
 
         <a href="{{ url_for('home') }}" class="back-link">← Home</a>
 
         <h2>6v6 War Table Generator</h2>
+
+        {% if filename %}
+            <img class="result" src="http://localhost:5000/table/{{filename}}">
+            <br>
+        {% endif %}
+        <h3>Styling Options</h3>
 
         <form method="POST">
         
@@ -32,13 +39,19 @@
                 default="WAR RESULT"
             >
             <input 
+                type="text" 
+                name="subtitle"
+                placeholder="Subtitle / Date (default: GMT Date)"
+                default="EMPTY"
+            >
+            <input 
                 type="URL" 
                 name="background_url"
                 placeholder="Background URL (optional)"
                 default="EMPTY"
             >
 
-            <br>
+    
             <h3> Team 1 </h3>
 
             <input 
@@ -128,10 +141,6 @@
                 <button type="submit">Create</button>
 
         </form>
-
-        
-
-
 
     </main>
 

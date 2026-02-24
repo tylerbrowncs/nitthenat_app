@@ -3,6 +3,7 @@ from flask import Flask, current_app,redirect, request, render_template_string, 
 from utilities.generator_urls import generate_string
 from utilities.table_generator import generate_war_image
 from utilities.countires import COUNTRY_CODES, COUNTRY_NAMES
+from datetime import datetime
 import json, os
 
 app = Flask(__name__)
@@ -87,6 +88,7 @@ def reverse_proxy(code):
 def mktable6v6():
     app.logger.info(len(os.listdir("static/images/tables")))
     file_path_table = None
+    filename = None
 
     if request.method == "POST":
         app.logger.info(len(os.listdir("static/images/tables")))
@@ -102,6 +104,11 @@ def mktable6v6():
             title = "WAR RESULTS"
         app.logger.info(title)
         team1 = {}
+
+        subtitle = request.form.get(f"subtitle")
+
+        if subtitle == "":
+            subtitle = datetime.now().strftime("%b %d, %Y")
 
         team1["name"] = request.form.get(f"team1_name")
         team1["icon"] = request.form.get(f"team1_icon")
@@ -146,10 +153,10 @@ def mktable6v6():
             filename
         )
 
-        generate_war_image(data, file_path_table, bg_url, title)
+        generate_war_image(data, file_path_table, bg_url, title, subtitle)
         return redirect("/table/" + filename)
 
-    return render_template("mktablemaker-6v6.html", COUNTRY_NAMES=COUNTRY_NAMES)
+    return render_template("mktablemaker-6v6.html", COUNTRY_NAMES=COUNTRY_NAMES, filename=None)
 
 @app.route("/table/<image>")
 def table(image):
