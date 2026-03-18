@@ -1,5 +1,5 @@
 from flask import Flask, current_app,redirect, request, render_template_string, render_template, send_file
-
+from utilities.coloring import hex_to_rgb
 from utilities.generator_urls import generate_string
 from utilities.table_generator import generate_war_image
 from utilities.countires import COUNTRY_CODES, COUNTRY_NAMES
@@ -86,75 +86,81 @@ def reverse_proxy(code):
 
 @app.route('/mk-tablemaker/6v6', methods=["GET", "POST"])
 def mktable6v6():
-    app.logger.info(len(os.listdir("static/images/tables")))
-    file_path_table = None
-    filename = None
-
-    if request.method == "POST":
+    try:
         app.logger.info(len(os.listdir("static/images/tables")))
+        file_path_table = None
+        filename = None
+
+        if request.method == "POST":
+            app.logger.info(len(os.listdir("static/images/tables")))
 
 
-        bg_url = request.form.get(f"background_url")
+            bg_url = request.form.get(f"background_url")
 
-        if bg_url == "" or bg_url == None:
-            bg_url = "https://nitthenat.com/image/offline"
-        
-        title = request.form.get(f"title_text")
-        if title == "":
-            title = "WAR RESULTS"
-        app.logger.info(title)
-        team1 = {}
-
-        subtitle = request.form.get(f"subtitle")
-
-        if subtitle == "":
-            subtitle = datetime.now().strftime("%b %d, %Y")
-
-        team1["name"] = request.form.get(f"team1_name")
-        team1["icon"] = request.form.get(f"team1_icon")
-
-        team1["members"] = [
-            {"name": request.form.get(f"team1_p{i}_name"), 
-             "country": COUNTRY_CODES[COUNTRY_NAMES.index(request.form.get(f"team1_p{i}_country"))],
-             "score": int(request.form.get(f"team1_p{i}_score"))
-            } 
+            if bg_url == "" or bg_url == None:
+                bg_url = "https://nitthenat.com/image/offline"
             
-            for i in range(6)]
-        
+            title = request.form.get(f"title_text")
+            if title == "":
+                title = "WAR RESULTS"
+            app.logger.info(title)
+            team1 = {}
 
-        team2 = {}
+            subtitle = request.form.get(f"subtitle")
 
-        team2["name"] = request.form.get(f"team2_name")
-        team2["icon"] = request.form.get(f"team2_icon")
+            if subtitle == "":
+                subtitle = datetime.now().strftime("%b %d, %Y")
 
-        team2["members"] = [
-            {"name": request.form.get(f"team2_p{i}_name"), 
-             "country": COUNTRY_CODES[COUNTRY_NAMES.index(request.form.get(f"team2_p{i}_country"))],
-             "score": int(request.form.get(f"team2_p{i}_score"))
-            } 
+            team1["name"] = request.form.get(f"team1_name")
+            team1["icon"] = request.form.get(f"team1_icon")
+
+            team1["members"] = [
+                {"name": request.form.get(f"team1_p{i}_name"), 
+                "country": COUNTRY_CODES[COUNTRY_NAMES.index(request.form.get(f"team1_p{i}_country"))],
+                "score": int(request.form.get(f"team1_p{i}_score"))
+                } 
+                
+                for i in range(6)]
             
-            for i in range(6)]
-        
-        data = {
-            "teams":[team1, team2]
-        }
 
-        base_dir = current_app.root_path
+            team2 = {}
 
-        filename = generate_string(
-            len(os.listdir(os.path.join(base_dir, "static", "images", "tables")))
-        ) + ".png"
+            team2["name"] = request.form.get(f"team2_name")
+            team2["icon"] = request.form.get(f"team2_icon")
 
-        file_path_table = os.path.join(
-            base_dir,
-            "static",
-            "images",
-            "tables",
-            filename
-        )
+            team2["members"] = [
+                {"name": request.form.get(f"team2_p{i}_name"), 
+                "country": COUNTRY_CODES[COUNTRY_NAMES.index(request.form.get(f"team2_p{i}_country"))],
+                "score": int(request.form.get(f"team2_p{i}_score"))
+                } 
+                
+                for i in range(6)]
+            
+            data = {
+                "teams":[team1, team2]
+            }
 
-        generate_war_image(data, file_path_table, bg_url, title, subtitle)
-        return redirect("/table/" + filename)
+            base_dir = current_app.root_path
+
+            filename = generate_string(
+                len(os.listdir(os.path.join(base_dir, "static", "images", "tables")))
+            ) + ".png"
+
+            file_path_table = os.path.join(
+                base_dir,
+                "static",
+                "images",
+                "tables",
+                filename
+            )
+
+            color = hex_to_rgb(request.form.get("favcolor"))
+            app.logger.info(color)
+
+            generate_war_image(data, file_path_table, bg_url, title, subtitle, color)
+            return redirect("/table/" + filename)
+    except:
+        return render_template("404.html"), 404
 
     return render_template("mktablemaker-6v6.html", COUNTRY_NAMES=COUNTRY_NAMES, filename=None)
 

@@ -9,7 +9,7 @@ from datetime import datetime
 # THEME
 # ============================
 
-TWITCH_PURPLE = (145, 70, 255)
+ACCENTS = (145, 70, 255)
 TWITCH_GRAY = (40, 40, 45)
 TWITCH_DARK = (24, 24, 27)
 WHITE = (255, 255, 255)
@@ -137,9 +137,17 @@ def draw_medal(base, x, y, color, size=50):
 # MAIN GENERATOR
 # ============================
 
-def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title, sub_text=datetime.now().strftime("%b %d, %Y")):
+def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title, sub_text=datetime.now().strftime("%b %d, %Y"), ACCENTS = (145, 70, 255)):
 
     teams = data["teams"]
+
+    title_font = load_font(115)
+    team_font = load_font(75)
+    player_font = load_font(80)
+    total_font = load_font(170)
+    diff_font = load_font(110)
+    watermark_font = load_font(26)
+    date_font = load_font(40)
 
     for team in teams:
         team["total"] = sum(p["score"] for p in team["members"])
@@ -168,17 +176,10 @@ def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title, sub_text=datet
     img = base.copy()
     draw = ImageDraw.Draw(img)
 
-    title_font = load_font(115)
-    team_font = load_font(75)
-    player_font = load_font(80)
-    total_font = load_font(170)
-    diff_font = load_font(110)
-    watermark_font = load_font(26)
-    date_font = load_font(40)
 
     draw.text((WIDTH//2, PADDING-25), title,
               font=title_font,
-              fill=TWITCH_PURPLE,
+              fill=ACCENTS,
               anchor="mm",
               stroke_width=4,
               stroke_fill=(0,0,0))
@@ -201,6 +202,12 @@ def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title, sub_text=datet
         panel_positions.append([x, y, x+col_width, y+panel_height])
 
         radius = 60
+
+        if len(team["name"]) > 18:
+            team_font = load_font(55)
+        else:
+            team_font = load_font(75)
+
 
         panel = Image.new("RGBA", (col_width, panel_height), (0,0,0,0))
 
@@ -227,7 +234,7 @@ def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title, sub_text=datet
         draw.rounded_rectangle(
              [x,y,x+col_width,y+panel_height],
              radius=radius,
-             outline=TWITCH_PURPLE,
+             outline=ACCENTS,
              width=6
          )
 
@@ -248,13 +255,19 @@ def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title, sub_text=datet
 
         draw.line((x+60, y+TEAM_HEADER_HEIGHT-25,
                    x+col_width-60, y+TEAM_HEADER_HEIGHT-25),
-                  fill=TWITCH_PURPLE, width=4)
+                  fill=ACCENTS, width=4)
 
         py = y + TEAM_HEADER_HEIGHT
 
         for player in sorted(team["members"], key=lambda p:p["score"], reverse=True):
 
             name = player["name"]
+
+            if len(name) > 18:
+                player_font = load_font(45)
+            else:
+                player_font = load_font(80)
+
             score = str(player["score"])
 
             name_w, name_h = text_size(draw, name, player_font)
@@ -312,7 +325,7 @@ def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title, sub_text=datet
         draw.rounded_rectangle(box,
                                radius=60,
                                fill=TWITCH_GRAY,
-                               outline=TWITCH_PURPLE,
+                               outline=ACCENTS,
                                width=6)
 
         draw.text((cx, cy),
@@ -353,10 +366,10 @@ if __name__ == "__main__":
     sample_data = {
         "teams": [
             {
-                "name": "TrivialMatters",
+                "name": "Trivial Matters (TM) xyz12345",
                 "icon": "https://media.discordapp.net/attachments/1231262099871633549/1281379714577203312/u44K2BWxA0zseaTzLV8wjLnfnSyBhC5Now432tHA_1.png?ex=699e255a&is=699cd3da&hm=839a8a503ccb8bcf6355f71618cc9d8d59c12dc700a3d4a922e8d38bdeff0318&=&format=webp&quality=lossless",
                 "members": [
-                    {"name": "Nat", "country": "gb-wls", "score": 154},
+                    {"name": "NatTheNatFromWalesYippy", "country": "gb-wls", "score": 154},
                     {"name": "Alex", "country": "gb-eng", "score": 140},
                     {"name": "Liam", "country": "gb-sct", "score": 130},
                     {"name": "Mia", "country": "gb-nir", "score": 120},
@@ -379,5 +392,5 @@ if __name__ == "__main__":
         ]
     }
 
-    generate_war_image(sample_data, "test.png", "https://catwithmonocle.com/wp-content/uploads/2023/04/smb-movie-mario-kart-3840x2160-1.jpg", "TM vs Influx | #1921")
+    generate_war_image(sample_data, "test.png", "https://catwithmonocle.com/wp-content/uploads/2023/04/smb-movie-mario-kart-3840x2160-1.jpg", "TM vs Influx | #1921", ACCENTS=(0, 255, 255))
 

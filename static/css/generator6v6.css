@@ -193,3 +193,53 @@ form button:hover {
   border:#772ce8 5px solid;
   border-radius: 16px;
 }
+
+#favcolor-tables {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 250px;
+  height: 44px;
+  border: none;
+  border-radius: 12px;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Color swatch (Chrome, Edge, Safari) */
+#favcolor-tables::-webkit-color-swatch {
+  border-radius: 10px;
+  border: 2px solid #2a2a2a;
+}
+
+/* Firefox */
+#favcolor-tables::-moz-color-swatch {
+  border-radius: 10px;
+  border: 2px solid #2a2a2a;
+}
+
+/* Hover effect */
+#favcolor-tables:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 10px rgba(145, 70, 255, 0.6);
+}
+
+/* Active (click) */
+#favcolor-tables:active {
+  transform: scale(0.95);
+}
+
+/* Optional: focus glow for accessibility */
+#favcolor-tables:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(145, 70, 255, 0.8);
+}
+
+.color-label {
+  display: block;
+  font-size: 12px;
+  color: #aaa;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
