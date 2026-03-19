@@ -148,6 +148,7 @@ def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title, sub_text=datet
     diff_font = load_font(110)
     watermark_font = load_font(26)
     date_font = load_font(40)
+    score_font = load_font(80)
 
     for team in teams:
         team["total"] = sum(p["score"] for p in team["members"])
@@ -176,6 +177,10 @@ def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title, sub_text=datet
     img = base.copy()
     draw = ImageDraw.Draw(img)
 
+    if len(title) > 35:
+        title_font = load_font(60)
+    else:
+        title_font = load_font(80)
 
     draw.text((WIDTH//2, PADDING-25), title,
               font=title_font,
@@ -288,10 +293,10 @@ def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title, sub_text=datet
                            player_medals[id(player)],
                            45)
 
-            score_w,_ = text_size(draw, score, player_font)
+            score_w,_ = text_size(draw, score, score_font)
 
             draw.text((x+col_width-80-score_w, text_y),
-                      score, font=player_font, fill=WHITE)
+                      score, font=score_font, fill=WHITE)
 
             py += ROW_HEIGHT
 
@@ -369,7 +374,7 @@ if __name__ == "__main__":
                 "name": "Trivial Matters (TM) xyz12345",
                 "icon": "https://media.discordapp.net/attachments/1231262099871633549/1281379714577203312/u44K2BWxA0zseaTzLV8wjLnfnSyBhC5Now432tHA_1.png?ex=699e255a&is=699cd3da&hm=839a8a503ccb8bcf6355f71618cc9d8d59c12dc700a3d4a922e8d38bdeff0318&=&format=webp&quality=lossless",
                 "members": [
-                    {"name": "NatTheNatFromWalesYippy", "country": "gb-wls", "score": 154},
+                    {"name": "NatTheNatFromWalesYippy12", "country": "gb-wls", "score": 154},
                     {"name": "Alex", "country": "gb-eng", "score": 140},
                     {"name": "Liam", "country": "gb-sct", "score": 130},
                     {"name": "Mia", "country": "gb-nir", "score": 120},
@@ -392,5 +397,5 @@ if __name__ == "__main__":
         ]
     }
 
-    generate_war_image(sample_data, "test.png", "https://catwithmonocle.com/wp-content/uploads/2023/04/smb-movie-mario-kart-3840x2160-1.jpg", "TM vs Influx | #1921", ACCENTS=(0, 255, 255))
+    generate_war_image(sample_data, "test.png", "https://catwithmonocle.com/wp-content/uploads/2023/04/smb-movie-mario-kart-3840x2160-1.jpg", "TM vs Influx | #21234 Semi-Finals", ACCENTS=(0, 255, 255))
 

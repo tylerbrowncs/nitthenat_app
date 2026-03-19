@@ -14,7 +14,7 @@ def home():
 
 @app.route("/mkw100")
 def mkw100():
-    return render_template("100percentMKW.html")
+    return render_template("posts/post_MKW100p.html")
 
 
 
