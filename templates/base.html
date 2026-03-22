@@ -7,14 +7,13 @@
     <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/profile.png') }}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/profile.png') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/profile.png') }}">
-        <!-- Basic Open Graph -->
+
     <meta property="og:title" content="NitTheNat">
     <meta property="og:description" content="NitTheNat | Streamer | Karter | Disabled">
     <meta property="og:image" content="https://nitthenat.com/image/profile">
     <meta property="og:url" content="https://bitthenat.com">
     <meta property="og:type" content="website">
 
-    <!-- Optional but recommended -->
     <meta property="og:site_name" content="NitTheNat.com">
     <meta name="theme-color" content="#9146FF">
 
@@ -27,13 +26,9 @@
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
-    <!-- jQuery (required for Select2) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <!-- Select2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
-    <!-- Select2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     {% block head %}{% endblock %}
@@ -67,9 +62,10 @@
             <a href="{{ url_for('mkw100') }}">100% Speedrun</a>
         </div>
 
-        <a href="https://twitch.tv/nitthenat">
-            <i class="fab fa-twitch"></i> Twitch
+        <a href="{{ url_for('tourneys') }}">
+            <i class="fa fa-users"></i> Tournaments
         </a>
+
 
         <button class="dropdown-btn">
             <i class="fas fa-screwdriver-wrench"></i> Tools
@@ -80,6 +76,10 @@
             <a href="{{ url_for('shorten') }}">URL Shortener</a>
             <a href="{{ url_for('mktable6v6') }}">6v6 Table Generator</a>
         </div>
+
+        <a href="https://twitch.tv/nitthenat">
+            <i class="fab fa-twitch"></i> Twitch
+        </a>
 
     </div>
     <div class="sidebar-watermark">

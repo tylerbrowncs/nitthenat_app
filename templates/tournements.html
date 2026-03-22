@@ -1,0 +1,404 @@
+{% extends "base.html" %}
+
+{% block title %}NitTheNat | Tournement History{% endblock %}
+
+{% block head %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tournements.css') }}">
+
+
+{% endblock %}
+
+{% block content %}
+
+<div class="mkw-page">
+
+    <header class="hero-banner">
+        <h1>Mario Kart <br>Tournament History</h1>
+    </header>
+
+    <main class="content-panel">
+
+        <a href="{{ url_for('home') }}" class="back-link">← Home</a>
+
+        <h2>NitTheNat's Tournament History</h2>
+
+        <div class="tournaments">
+            <section class="year-block">
+                <h4 class="category-title">2025 Tournament will be added soon.</h4>
+                </section>
+            <section class="year-block">
+                <h3 class="category-title">2024</h3>
+
+                <div class="grid-container">
+                    
+                    <a href="https://mkcentral.com/en-us/tournaments/details?id=482" class="tourney-card first-place">
+                        <span class="tourney-title">Piranha's Pursuit</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/oKRNBKdPY9s7BlaRcishHVI0HGHdh7RwoNV5X4IE.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">1st <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">	Resurgence</span>
+                        <span class="tourney-date">December 2024</span>
+                    </a> 
+                    
+                    <a href="https://mkcentral.com/en-us/tournaments/details?id=479" class="tourney-card">
+                        <span class="tourney-title">MKCentral Frontier VI</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/n7THwdEfzWVmVKVVUK5a3XE1GxvppWreIb7oGf6j.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">28th <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">Trivial Matters</span>
+                        <span class="tourney-date">November 2024</span>
+                    </a>  
+
+                    <a href="https://mkcentral.com/en-gb/tournaments/details?id=481" class="tourney-card third-place">
+                        <span class="tourney-title">European UML 2024</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/fW2bDCSYHVSN4QiJk4KaE3WTwxzHSt5tdzsL5eSe.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">3rd <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">Big Fellas Incorporate</span>
+                        <span class="tourney-date">October 2024</span>
+                    </a>    
+                    
+                    <a href="https://mkcentral.com/en-us/tournaments/details?id=472" class="tourney-card">
+                        <span class="tourney-title">Mario Kart Universal Season 25</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/3kVRcJfpYfj6QkTAxHn4nvLc2kiQ5j8ex9Dlxx7Z.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">60th <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">Trivial Matters</span>
+                        <span class="tourney-date">September 2024</span>
+                    </a>
+                    
+                    <a href="https://mkcentral.com/en-us/tournaments/details?id=473" class="tourney-card">
+                        <span class="tourney-title">200 League: Overdrive V</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/Tsq3C9P3PgWMtuCJtTfh4jLGuYolJGSVKZy4q2n0.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">7th <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">Enlightenment</span>
+                        <span class="tourney-date">August 2024</span>
+                    </a>
+                    
+                    <a href="https://mkcentral.com/en-us/tournaments/details?id=470" class="tourney-card">
+                        <span class="tourney-title">Pacific League Season 6</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/jYeyJ1a1f8KzgqktUjTMDUjJxobsRHsLdxJPfGG6.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">5th <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">Froug</span>
+                        <span class="tourney-date">August 2024</span>
+                    </a>
+                    
+                    <a href="https://mkcentral.com/en-us/tournaments/details?id=468" class="tourney-card">
+                        <span class="tourney-title">MKCentral Paradigm IV</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/nrEfOCzttCX1OcVlUH08B9XnSW6jBgyYA8bgvwfP.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">45th <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">Vespertine</span>
+                        <span class="tourney-date">July 2024</span>
+                    </a>
+                    
+                    <a href="https://mkcentral.com/en-us/tournaments/details?id=467" class="tourney-card">
+                        <span class="tourney-title">Grand Slam</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/ORZOAzBDAYN10XmporkVqBkKzW3oyQtBpOlYxhNH.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">15th <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">Froug</span>
+                        <span class="tourney-date">June 2024</span>
+                    </a>
+
+                    <a href="https://mkcentral.com/en-us/tournaments/details?id=461" class="tourney-card third-place">
+                        <span class="tourney-title">200 League Season 10</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/uD5C9lqlayk9Zaeqan6nat3C6Vlm9Vox3zYYQj9H.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">3rd <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">Enlightenment</span>
+                        <span class="tourney-date">April 2024</span>
+                    </a>
+
+                    <a href="https://mkcentral.com/en-us/tournaments/details?id=462" class="tourney-card">
+                        <span class="tourney-title">Mario Kart Universal Season 24</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/3kVRcJfpYfj6QkTAxHn4nvLc2kiQ5j8ex9Dlxx7Z.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">58th <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">Trivial Matters</span>
+                        <span class="tourney-date">April 2024</span>
+                    </a>
+                     
+                    <a href="https://mkcentral.com/en-us/tournaments/details?id=537" class="tourney-card">
+                        <span class="tourney-title">MKCentral SUMMIT 2v2 #17</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/gVASXlfjBEhdAOea1ARfU7xMG5MfXqhfuxQWmkrT.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">275th <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">with Froy</span>
+                        <span class="tourney-date">April 2024</span>
+                    </a>
+                     
+                    <a href="https://mkcentral.com/en-us/tournaments/details?id=460" class="tourney-card">
+                        <span class="tourney-title">MKCentral Paradigm III</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/nrEfOCzttCX1OcVlUH08B9XnSW6jBgyYA8bgvwfP.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">45th <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">Trivial Matters</span>
+                        <span class="tourney-date">March 2024</span>
+                    </a>
+                    
+                    <a href="https://mkcentral.com/en-us/tournaments/details?id=534" class="tourney-card">
+                        <span class="tourney-title">MKCentral SUMMIT 3v3 #15</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/gVASXlfjBEhdAOea1ARfU7xMG5MfXqhfuxQWmkrT.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">92nd <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">with Murm, Hazza</span>
+                        <span class="tourney-date">February 2024</span>
+                    </a>
+                    
+                    <a href="https://mkcentral.com/en-us/tournaments/details?id=458" class="tourney-card">
+                        <span class="tourney-title">Pacific League Season 5</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/jYeyJ1a1f8KzgqktUjTMDUjJxobsRHsLdxJPfGG6.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">13th <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">Chi Chi Beach</span>
+                        <span class="tourney-date">February 2024</span>
+                    </a>
+                    
+                    <a href="https://mkcentral.com/en-us/tournaments/details?id=455" class="tourney-card">
+                        <span class="tourney-title">Mario Kart Universal Season 23</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/3kVRcJfpYfj6QkTAxHn4nvLc2kiQ5j8ex9Dlxx7Z.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">58th <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">Trivial Matters</span>
+                        <span class="tourney-date">January 2024</span>
+                    </a>
+                    
+                    <a href="https://mkcentral.com/en-gb/tournaments/details?id=452" class="tourney-card">
+                        <span class="tourney-title">Mario Kart Euro Cup Season 3</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/3nWI5RV7iTfpBqyRQTt6nIwZzlXYO4HCRv7YIMUR.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">8th <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">	Caledonbria</span>
+                        <span class="tourney-date">January 2024</span>
+                    </a>
+
+                </div>
+            </section>
+
+            <section class="year-block">
+                <h3 class="category-title">2023</h3>
+
+                <div class="grid-container">
+                    
+                    <a href="https://mkcentral.com/en-gb/tournaments/details?id=433" class="tourney-card third-place">
+                        <span class="tourney-title">100 Point Cup III</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/7yAS5kGW6vDQlK2fQgpjLQaFZkNjk2ahdpTHjzNk.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">3rd <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">MKC Mafia</span>
+                        <span class="tourney-date">December 2023</span>
+                    </a>
+                    
+                    <a href="https://mkcentral.com/en-gb/tournaments/details?id=447" class="tourney-card">
+                        <span class="tourney-title">MKCentral Frontier V</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/n7THwdEfzWVmVKVVUK5a3XE1GxvppWreIb7oGf6j.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">55th <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">Trivial Matters</span>
+                        <span class="tourney-date">November 2023</span>
+                    </a>
+
+                    <a href="https://mkcentral.com/en-gb/tournaments/details?id=445" class="tourney-card">
+                        <span class="tourney-title">Pacific League Season 4</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/jYeyJ1a1f8KzgqktUjTMDUjJxobsRHsLdxJPfGG6.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">11th <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">Chi Chi Beach</span>
+                        <span class="tourney-date">October 2023</span>
+                    </a>
+
+                    <a href="https://mkcentral.com/en-gb/tournaments/details?id=441" class="tourney-card">
+                        <span class="tourney-title">Mario Kart Universal Season 22</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/3kVRcJfpYfj6QkTAxHn4nvLc2kiQ5j8ex9Dlxx7Z.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">58th <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">Trivial Matters</span>
+                        <span class="tourney-date">September 2023</span>
+                    </a>
+                    
+                    <a href="https://mkcentral.com/en-gb/tournaments/details?id=438" class="tourney-card">
+                        <span class="tourney-title">200 League Season 9</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/uD5C9lqlayk9Zaeqan6nat3C6Vlm9Vox3zYYQj9H.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">8th <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">Enlightenment</span>
+                        <span class="tourney-date">August 2023</span>
+                    </a>
+                    
+                    <a href="https://mkcentral.com/en-gb/tournaments/details?id=435" class="tourney-card">
+                        <span class="tourney-title">MKCentral Paradigm II</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/nrEfOCzttCX1OcVlUH08B9XnSW6jBgyYA8bgvwfP.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">41st <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">Trivial Matters</span>
+                        <span class="tourney-date">July 2023</span>
+                    </a>
+
+                    <a href="https://mkcentral.com/en-gb/tournaments/details?id=434" class="tourney-card">
+                        <span class="tourney-title">Instant Team Cup II</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/zCpX4LGblyBsRUbPfxEd0Qz0c4Za6JXOfAuG90kF.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">5th <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">The stick</span>
+                        <span class="tourney-date">July 2023</span>
+                    </a>
+                    
+                    <a href="https://mkcentral.com/en-gb/tournaments/details?id=430" class="tourney-card division-champs">
+                        <span class="tourney-title">Mario Kart Universal Season 21</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/3kVRcJfpYfj6QkTAxHn4nvLc2kiQ5j8ex9Dlxx7Z.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">62nd, D9 Champs <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">Trivial Matters</span>
+                        <span class="tourney-date">April 2023</span>
+                    </a>
+
+                    <a href="https://mkcentral.com/en-gb/tournaments/details?id=431" class="tourney-card">
+                        <span class="tourney-title">200 League: Overdrive IV</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/Tsq3C9P3PgWMtuCJtTfh4jLGuYolJGSVKZy4q2n0.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">6th <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">Enlightenment</span>
+                        <span class="tourney-date">April 2023</span>
+                    </a>
+                    
+                    <a href="https://mkcentral.com/en-gb/tournaments/details?id=417" class="tourney-card">
+                        <span class="tourney-title">200 League Season 8</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/6dlYFmVvjRPGWV6lpVKn1cqiYtPt9tFbhhCTFr5r.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">6th, D2 Champs <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">Enlightenment</span>
+                        <span class="tourney-date">January 2023</span>
+                    </a>
+                    
+                    <a href="https://mkcentral.com/en-gb/tournaments/details?id=416" class="tourney-card">
+                        <span class="tourney-title">Mario Kart Universal Season 20</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/3kVRcJfpYfj6QkTAxHn4nvLc2kiQ5j8ex9Dlxx7Z.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">42nd <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">Battle Battalion</span>
+                        <span class="tourney-date">January 2023</span>
+                    </a>
+                    
+                    <a href="https://mkcentral.com/en-gb/tournaments/details?id=421" class="tourney-card second-place">
+                        <span class="tourney-title">Mid Div Cup Season 1</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/uSzJ1wywwIVoBCmP7AQI9g2vCix86iWqyGkEHFEl.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">2nd <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">Battle Battalion</span>
+                        <span class="tourney-date">January 2023</span>
+                    </a>
+                    
+                </div>
+            </section>
+
+            <section class="year-block">
+                <h3 class="category-title">2022</h3>
+
+                <div class="grid-container">
+
+                    <a href="https://mkcentral.com/en-gb/tournaments/details?id=415" class="tourney-card">
+                        <span class="tourney-title">100 Point Cup II</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/7yAS5kGW6vDQlK2fQgpjLQaFZkNjk2ahdpTHjzNk.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">5th <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">Battle Brigade</span>
+                        <span class="tourney-date">December 2022</span>
+                    </a>
+
+                    <a href="https://mkcentral.com/en-gb/tournaments/details?id=408" class="tourney-card">
+                        <span class="tourney-title">Mario Kart Euro Cup Season 2</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/j4iE7f5qTDKon4IzsgJRXNWhtcNaGHxt65eg9q0y.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">6th <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">Celtic Nation </span>
+                        <span class="tourney-date">December 2022</span>
+                    </a>
+
+                    <a href="https://mkcentral.com/en-gb/tournaments/details?id=405" class="tourney-card">
+                        <span class="tourney-title">EuroLeague Season 9</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/ZJOOaaObC3KO54MJZ5yudPqZosPugOIgC0YGIExo.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">8th <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">Battle Brigade </span>
+                        <span class="tourney-date">November 2022</span>
+                    </a>
+
+                    <a href="https://mkcentral.com/en-gb/tournaments/details?id=338" class="tourney-card">
+                        <span class="tourney-title">Mario Kart Universal Season 19</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/3kVRcJfpYfj6QkTAxHn4nvLc2kiQ5j8ex9Dlxx7Z.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">56th <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">Battle Battalion </span>
+                        <span class="tourney-date">October 2022</span>
+                    </a>
+
+                    <a href="https://mkcentral.com/en-gb/tournaments/details?id=409" class="tourney-card">
+                        <span class="tourney-title">200cc UML Season 3</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/qL6ismcVw5yHKuDo8Q88CCzLIkUljEtletOosfdU.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">7th <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">Diabolus </span>
+                        <span class="tourney-date">October 2022</span>
+                    </a>
+
+                    <a href="https://mkcentral.com/en-gb/tournaments/details?id=394" class="tourney-card">
+                        <span class="tourney-title">European Regional Rumble</span>
+                        <div class="tourney-image">
+                            <img src="https://mkcentral.com/img/mkcv1_images/event_logos/sEf06swaq7EH5PWAab2kNDm3RfK7lWjI8enEi4OE.png" alt="Tournament Logo">
+                        </div>
+                        <span class="tourney-rank">13th <i class="fa-solid fa-users"></i></span>
+                        <span class="tourney-team">Wales </span>
+                        <span class="tourney-date">October 2022</span>
+                    </a>
+                    
+                </div>
+            </section>
+
+
+            
+
+        </div>
+
+        
+    </main>
+
+</div>
+
+{% endblock %}

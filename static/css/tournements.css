@@ -1,0 +1,267 @@
+
+
+#invislink {
+    color: inherit;    
+  text-decoration: underline;
+}
+
+#invislink:visited {
+  color: inherit;       
+}
+
+#invislink:hover {
+  color: inherit;  
+}
+
+.mkw-page {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.page-wrapper:has(.mkw-page) {
+    align-items: stretch;
+    justify-content: flex-start;
+    padding-top: 20px;
+}
+
+.hero-banner {
+    width: 100%;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hero-banner h1 {
+    font-size: 3rem;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: white;
+    text-align: center;
+}
+
+.content-panel {
+    max-width: 65%;
+    width: 90%;
+    background-color: #1a1a1c;
+    margin-top: 30px;
+    margin-bottom: 60px;
+    padding: 25px;
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    border: 1px solid #3a3a3c;
+    color: white;
+}
+
+.content-panel h3 {
+    color: var(--twitch-purple);
+    font-size: 2rem;
+    margin-top: 0;
+    border-bottom: 2px solid #333;
+    padding-bottom: 15px; 
+}
+
+.content-panel h2 {
+    color: var(--twitch-purple);
+    font-size: 3rem;
+    margin-top: 0;
+    margin-bottom: 0;
+    border-bottom: 2px solid #333;
+    padding-bottom: 15px;
+    margin-left: 20px;
+}
+
+.content-panel p {
+    line-height: 1.6;
+    color: #d1d1d1;
+    font-size: 1.1rem;
+}
+
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 20px;
+    color: var(--twitch-purple);
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.tournaments {
+    color: var(--text-white);
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    padding: 20px;
+}
+
+.year-block {
+    margin-bottom: 30px;
+}
+
+.category-title {
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 25px;
+}
+
+.tourney-card {
+    text-decoration: none; 
+    color: inherit;       
+    background-color: var(--twitch-dark);
+    border: 3px solid #534a63;
+    border-radius: 30px; 
+    padding: 15px;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.tourney-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--twitch-purple);
+    text-decoration: none; 
+    color: inherit;    
+}
+
+.tourney-title {
+    display: flex;
+    font-size: 0.85rem;
+    font-weight: 700;
+    vertical-align: middle;
+    align-items: center;
+    text-transform: uppercase;
+    text-align: center;
+    height: 35px;
+}
+
+.tourney-image {
+    width: 100%;
+    height: 100%;
+    max-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+}
+
+.tourney-image img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; 
+}
+
+.tourney-rank {
+    font-weight: 900;
+    font-size: 0.8rem;
+}
+
+.tourney-date {
+    font-size: 0.75rem;
+    opacity: 0.7;
+    text-transform: uppercase;
+}
+
+.tourney-team {
+    font-size: 0.75rem;
+    opacity: 0.7;
+    text-transform: uppercase;
+}
+
+.first-place {
+    border: 3px solid gold;
+}
+
+.second-place {
+    border: 3px solid silver;
+}
+
+.third-place {
+    border: 3px solid #804A00;
+}
+
+.division-champs {
+    border: 3px solid #E2007A;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 1024px) {
+    .content-panel {
+        max-width: 90%; 
+        width: auto; 
+        margin: 20px auto; 
+        padding: 20px;
+    }
+    .content-panel h2 {
+    font-size: 1rem;
+}
+    
+}
+
+@media (max-width: 768px) {
+    /* Shrink the Hero text so it doesn't take up the whole screen */
+    .hero-banner h1 {
+        font-size: 1.8rem;
+        letter-spacing: 2px;
+    }
+    .content-panel h2 {
+    font-size: 1rem;
+}
+
+    /* Grid fix: This is the most important part */
+    .grid-container {
+        display: grid;
+        /* Force two even columns that fit perfectly */
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 12px;
+    }
+
+    .tourney-card {
+        padding: 10px;
+        border-radius: 20px;
+        /* aspect-ratio: 1/1 can be tricky if content is tall, 
+           let's ensure it doesn't overflow */
+        min-width: 0; 
+    }
+
+    .tourney-image {
+        max-height: 60px; /* Make the logo smaller on mobile */
+    }
+
+    .tourney-title {
+        font-size: 0.65rem; /* Stop the title from stretching the card */
+    }
+
+    .tourney-rank {
+        font-size: 0.9rem;
+    }
+
+    .tourney-date {
+        font-size: 0.6rem;
+    }
+}
+
+/* For very small phones (like older iPhones) */
+@media (max-width: 360px) {
+    .content-panel {
+        padding: 10px;
+    }
+    
+    .grid-container {
+        gap: 8px;
+    }
+}

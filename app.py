@@ -3,19 +3,22 @@ from utilities.coloring import hex_to_rgb
 from utilities.generator_urls import generate_string
 from utilities.table_generator import generate_war_image
 from utilities.countires import COUNTRY_CODES, COUNTRY_NAMES
+from utilities.liveChecker import isLive
 from datetime import datetime
 import json, os
 
 app = Flask(__name__)
 
+STAT_FILE = "stats.json"
+
 @app.route("/")
 def home():
-    return render_template("home.html")
+    live = isLive('nitthenat')
+    return render_template("home.html", live=live)
 
-@app.route("/mkw100")
-def mkw100():
-    return render_template("posts/post_MKW100p.html")
-
+@app.errorhandler(404)
+def not_found(e):
+    return render_template("404.html"), 404
 
 
 @app.route("/image/offline")
@@ -26,6 +29,65 @@ def imgoff():
 @app.route("/image/profile")
 def imgprof():
     return send_file("static/images/profile.png")
+
+@app.route("/tournements")
+def tourneys():
+    return render_template("tournements.html")
+
+#######################################
+#
+#   Tracking
+#
+########################################
+def isValidRoute(route):
+    for rule in app.url_map.iter_rules():
+        if rule.rule == route:
+            return True
+        
+    return False
+
+@app.after_request
+def track_page_views(response):
+
+    if request.path.startswith(("/r","/image", "/static", "/favicon.ico", "/table")):
+        return response
+    
+    if not isValidRoute(request.path):
+        return response
+    
+    if os.path.exists(STAT_FILE):
+        try:
+            with open(STAT_FILE, "r") as f:
+                data = json.load(f)
+        except json.JSONDecodeError:
+            data = {}
+    else:
+        data = {}
+
+
+    if request.path not in data:
+        data[request.path] = {
+            "total_views": 0
+        }
+
+
+    data[request.path]["total_views"] += 1
+
+    with open(STAT_FILE, "w") as f:
+        json.dump(data, f, indent=4)
+
+
+    return response
+
+#######################################
+#
+#   POSTS
+#
+########################################
+
+@app.route("/mkw100")
+def mkw100():
+    return render_template("posts/post_MKW100p.html")
 
 #######################################
 #
@@ -75,7 +137,7 @@ def reverse_proxy(code):
     if code in urls:
         return redirect(urls[code])
     else:
-        return render_template("404.html"), 404
+        return render_template("404_url_shortener.html"), 404
     
 
 #######################################
@@ -158,6 +220,32 @@ def mktable6v6():
             app.logger.info(color)
 
             generate_war_image(data, file_path_table, bg_url, title, subtitle, color)
+
+            #TRACK TABLE CREATION
+    
+            if os.path.exists(STAT_FILE):
+                try:
+                    with open(STAT_FILE, "r") as f:
+                        data = json.load(f)
+                except json.JSONDecodeError:
+                    data = {}
+            else:
+                data = {}
+
+
+            if "tables_created" not in data:
+                data["tables_created"] = {
+                    "6v6": 0
+                }
+
+
+            data["tables_created"]["6v6"] += 1
+
+            with open(STAT_FILE, "w") as f:
+                json.dump(data, f, indent=4)
+
+
+
             return redirect("/table/" + filename)
     except:
         return render_template("404.html"), 404
@@ -166,7 +254,10 @@ def mktable6v6():
 
 @app.route("/table/<image>")
 def table(image):
-    return send_file("static/images/tables/"+image)
+    if os.path.exists("static/images/tables/"+image):
+        return send_file("static/images/tables/"+image)
+    else:
+        return render_template("404_url_shortener.html")
 
 
 #######################################
