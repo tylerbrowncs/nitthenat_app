@@ -106,6 +106,7 @@
     font-size: 1.6rem;
     margin-bottom: 20px;
     font-weight: 700;
+    
 }
 
 .grid-container {
@@ -120,7 +121,7 @@
     background-color: var(--twitch-dark);
     border: 3px solid #534a63;
     border-radius: 30px; 
-    padding: 15px;
+    padding: 10px;
     aspect-ratio: 1 / 1;
     display: flex;
     flex-direction: column;
@@ -138,13 +139,19 @@
 
 .tourney-title {
     display: flex;
-    font-size: 0.85rem;
+    font-size: 0.7rem;
     font-weight: 700;
-    vertical-align: middle;
-    align-items: center;
     text-transform: uppercase;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     height: 35px;
+    border-bottom: 2px solid #333;
+    border-top: 2px solid #333;
+    width: 90%;
+    border-radius: 10px;
+    margin-top: 2px;
+    padding: 2px;
 }
 
 .tourney-image {
@@ -154,7 +161,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 10px 0;
+    margin: 3px 0;
 }
 
 .tourney-image img {
@@ -175,9 +182,10 @@
 }
 
 .tourney-team {
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     opacity: 0.7;
     text-transform: uppercase;
+    text-align: center;
 }
 
 .first-place {
@@ -195,7 +203,10 @@
 .division-champs {
     border: 3px solid #E2007A;
 }
-
+.game-logo {
+    height: 15%;
+    margin-bottom: 5px;
+}
 
 /* RESPONSIVE */
 
