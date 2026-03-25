@@ -107,6 +107,7 @@
     color: var(--twitch-purple);
     font-weight: bold;
     text-decoration: none;
+    padding-right:3%;
 }
 
 .back-link:hover {
