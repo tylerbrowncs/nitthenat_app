@@ -207,8 +207,9 @@ def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title, sub_text=datet
         panel_positions.append([x, y, x+col_width, y+panel_height])
 
         radius = 60
-
-        if len(team["name"]) > 18:
+        if len(team["name"]) > 32:
+            team_font = load_font(40)
+        elif len(team["name"]) > 18:
             team_font = load_font(55)
         else:
             team_font = load_font(75)
@@ -253,10 +254,10 @@ def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title, sub_text=datet
         medal_x = x + col_width//2 - (name_w//2) - 80
         medal_y = name_y - 40
 
-        if i == 0:
-            draw_medal(img, medal_x, medal_y, (255,215,0))
-        elif i == 1:
-            draw_medal(img, medal_x, medal_y, (200,200,200))
+        # if i == 0:
+        #     draw_medal(img, medal_x, medal_y, (255,215,0))
+        # elif i == 1:
+        #     draw_medal(img, medal_x, medal_y, (200,200,200))
 
         draw.line((x+60, y+TEAM_HEADER_HEIGHT-25,
                    x+col_width-60, y+TEAM_HEADER_HEIGHT-25),
@@ -383,7 +384,7 @@ if __name__ == "__main__":
                 ]
             },
             {
-                "name": "Influx",
+                "name": "abcdefghijklmnopqrstuvwxyz123456789123",
                 "icon": "https://media.discordapp.net/attachments/1324872676074061864/1324873171597525003/mTFB7Expbp6dXI9A9JK3Q0U61besy0wEZM5aZmtE.png?ex=699e2bcb&is=699cda4b&hm=eacdc83d6c9c7716a7faed558030e89def8e6d82af153c88ebf7fbeeb7c2a948&=&format=webp&quality=lossless",
                 "members": [
                     {"name": "Hawkey", "country": "ca", "score": 160},
