@@ -3,6 +3,23 @@
 {% block title %}NitTheNat | 6v6 Table{% endblock %}
 
 {% block head %}
+<script>
+$(document).ready(function() {
+    $('.searchable').select2({
+        placeholder: "Select a country",
+        allowClear: false,
+        width: '200px'
+    });
+
+    // Fix tabbing behavior
+    $(document).on('select2:close', function(e) {
+        const $next = $(e.target).closest('span.select2').nextAll('input, select, button').first();
+        if ($next.length) {
+            $next.focus();
+        }
+    });
+});
+</script>
 
 <link rel="stylesheet" href="{{ url_for('static', filename='css/generator6v6.css') }}">
 
