@@ -217,7 +217,7 @@ def mktable6v6():
             )
 
             color = hex_to_rgb(request.form.get("favcolor"))
-            app.logger.info(color)
+            app.logger.info(data)
 
             generate_war_image(data, file_path_table, bg_url, title, subtitle, color)
 

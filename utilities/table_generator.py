@@ -153,6 +153,9 @@ def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title, sub_text=datet
     for team in teams:
         team["total"] = sum(p["score"] for p in team["members"])
 
+
+
+
     teams = sorted(teams, key=lambda t: t["total"], reverse=True)
 
     all_players = [p for t in teams for p in t["members"]]
@@ -217,13 +220,18 @@ def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title, sub_text=datet
 
         panel = Image.new("RGBA", (col_width, panel_height), (0,0,0,0))
 
+        overlay = Image.new("RGBA", (col_width, panel_height), (40,40,45,200))
+
         if team.get("icon"):
             icon = load_image(team["icon"])
             if icon:
                 icon = icon.resize((col_width, panel_height), Image.LANCZOS)
-                overlay = Image.new("RGBA", icon.size, (40,40,45,200))
                 icon = Image.alpha_composite(icon, overlay)
                 panel.paste(icon, (0,0), icon)
+            else:
+                panel.paste(overlay, (0,0), overlay)
+        else:
+            panel.paste(overlay, (0,0), overlay)
 
         mask = Image.new("L", (col_width, panel_height), 0)
         ImageDraw.Draw(mask).rounded_rectangle(
@@ -372,8 +380,8 @@ if __name__ == "__main__":
     sample_data = {
         "teams": [
             {
-                "name": "Trivial Matters (TM) xyz12345",
-                "icon": "https://media.discordapp.net/attachments/1231262099871633549/1281379714577203312/u44K2BWxA0zseaTzLV8wjLnfnSyBhC5Now432tHA_1.png?ex=699e255a&is=699cd3da&hm=839a8a503ccb8bcf6355f71618cc9d8d59c12dc700a3d4a922e8d38bdeff0318&=&format=webp&quality=lossless",
+                "name": "feh yo man",
+                "icon": "https://media.discordapp.net/attachments/1231262211813539890/1281382817955053578/8K2ghC5Zz5odshlUDSTxzK8gtQx4P47p91nYtyJP_1.png?ex=69d0e9fe&is=69cf987e&hm=373e49d4561b6426313360a464ecb72ff4f65e30d25988608fdc7bc2e1f233c1&=&format=webp&quality=lossless",
                 "members": [
                     {"name": "NatTheNatFromWalesYippy12", "country": "gb-wls", "score": 154},
                     {"name": "Alex", "country": "gb-eng", "score": 140},
@@ -385,7 +393,7 @@ if __name__ == "__main__":
             },
             {
                 "name": "abcdefghijklmnopqrstuvwxyz123456789123",
-                "icon": "https://media.discordapp.net/attachments/1324872676074061864/1324873171597525003/mTFB7Expbp6dXI9A9JK3Q0U61besy0wEZM5aZmtE.png?ex=699e2bcb&is=699cda4b&hm=eacdc83d6c9c7716a7faed558030e89def8e6d82af153c88ebf7fbeeb7c2a948&=&format=webp&quality=lossless",
+                "icon": "https://media.discordapp.net/attachments/1231262211813539890/1281382817955053578/8K2ghC5Zz5odshlUDSTxzK8gtQx4P47p91nYtyJP_1.png?ex=69d0e9fe&is=69cf987e&hm=373e49d4561b6426313360a464ecb72ff4f65e30d25988608fdc7bc2e1f233c1&=&format=webp&quality=lossless",
                 "members": [
                     {"name": "Hawkey", "country": "ca", "score": 160},
                     {"name": "Chrin", "country": "us", "score": 1350},
