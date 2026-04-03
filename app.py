@@ -260,6 +260,10 @@ def table(image):
         return render_template("404_url_shortener.html")
 
 
+@app.route("/zak")
+def zak():
+    return render_template("zak.html")
+
 #######################################
 #######################################
 #######################################
