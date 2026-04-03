@@ -11,9 +11,22 @@ $(document).ready(function() {
         width: '200px'
     });
 
-    // Fix tabbing behavior
-    $(document).on('select2:close', function(e) {
-        const $next = $(e.target).closest('span.select2').nextAll('input, select, button').first();
+    $(document).on('focus', '.select2-selection--single', function () {
+        const select = $(this).closest('.select2-container').prev('select');
+        select.select2('open');
+    });
+
+    $(document).on('select2:open', function () {
+        setTimeout(function() {
+            const searchField = document.querySelector('.select2-container--open .select2-search__field');
+            if (searchField) {
+                searchField.focus();
+            }
+        }, 0);
+    });
+
+    $(document).on('select2:select', function(e) {
+        const $next = $(e.target).closest('.select2').nextAll('input, select, button').first();
         if ($next.length) {
             $next.focus();
         }
@@ -42,7 +55,7 @@ $(document).ready(function() {
         <h2>6v6 War Table Generator</h2>
 
         {% if filename %}
-            <img class="result" src="http://localhost:5000/table/{{filename}}">
+            <img class="result" src="https://nitthenat.com/table/{{filename}}">
             <br>
         {% endif %}
         <h3>Styling Options</h3>
