@@ -204,9 +204,9 @@ def mktable6v6():
 
             base_dir = current_app.root_path
 
-            filename = generate_string(
+            filename = datetime.now().strftime("%d%m") + generate_string(
                 len(os.listdir(os.path.join(base_dir, "static", "images", "tables")))
-            ) + ".png"
+            ) + datetime.now().strftime("%y")+ ".png"
 
             file_path_table = os.path.join(
                 base_dir,
