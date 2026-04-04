@@ -277,7 +277,7 @@ def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title, sub_text=datet
 
             name = player["name"]
 
-            if len(name) > 18:
+            if len(name) > 16:
                 player_font = load_font(45)
             else:
                 player_font = load_font(80)
