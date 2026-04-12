@@ -1,4 +1,4 @@
-import pyodbc
+import pyodbc, pytz
 from datetime import datetime
 
 # Allowed log types
@@ -25,7 +25,8 @@ def log(log_type: str, message: str, user: str):
     :param log_datetime: datetime object
     :param message: log message (string)
     """
-    log_datetime = datetime.now()
+    lon = pytz.timezone('Europe/London')
+    log_datetime = datetime.now(lon)
 
     # Validate log type
     if log_type not in ALLOWED_LOG_TYPES:
