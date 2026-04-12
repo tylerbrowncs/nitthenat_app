@@ -6,7 +6,7 @@ from utilities.countires import COUNTRY_CODES, COUNTRY_NAMES
 from utilities.liveChecker import isLive
 from utilities.logger import log
 from datetime import datetime
-import json, os
+import json, os, threading
 
 app = Flask(__name__)
 
@@ -86,8 +86,14 @@ def track_page_views(response):
     except:
         ip = request.remote_addr
 
+    path = request.path
+
     
-    log("ACCESS", f"{request.path}", ip)
+    threading.Thread(
+        target=log,
+        args=("ACCESS", f"{path}", ip),
+        daemon=True
+    ).start()
 
 
     return response
@@ -150,7 +156,11 @@ def shorten():
             except:
                 ip = request.remote_addr
 
-            log("URL_SHORT", f"{original_url} > {short_url}", ip)
+            threading.Thread(
+                target=log,
+                args=("URL_SHORT", f"{original_url} > {short_url}", ip),
+                daemon=True
+            ).start()
 
     return render_template("shorten.html", short_url=short_url)
 
@@ -277,8 +287,11 @@ def mktable6v6():
             except:
                 ip = request.remote_addr
 
-            log("MAKE_TABLE", f"{filename}", ip)
-
+            threading.Thread(
+                target=log,
+                args=("MAKE_TABLE", f"{filename}", ip),
+                daemon=True
+            ).start()
             return redirect("/table/" + filename)
     except:
         return render_template("404.html"), 404
