@@ -4,6 +4,7 @@ from utilities.generator_urls import generate_string
 from utilities.table_generator import generate_war_image
 from utilities.countires import COUNTRY_CODES, COUNTRY_NAMES
 from utilities.liveChecker import isLive
+from utilities.logger import log
 from datetime import datetime
 import json, os
 
@@ -76,6 +77,9 @@ def track_page_views(response):
     with open(STAT_FILE, "w") as f:
         json.dump(data, f, indent=4)
 
+    
+    log("ACCESS", f"{request.path}", request.remote_addr)
+
 
     return response
 
@@ -127,6 +131,8 @@ def shorten():
             save_urls(urls)
 
             short_url = "https://nitthenat.com/r/" + code
+
+            log("URL_SHORT", f"{original_url} > {short_url}", request.remote_addr)
 
     return render_template("shorten.html", short_url=short_url)
 
@@ -244,7 +250,7 @@ def mktable6v6():
             with open(STAT_FILE, "w") as f:
                 json.dump(data, f, indent=4)
 
-
+            log("MAKE_TABLE", f"{filename}", request.remote_addr)
 
             return redirect("/table/" + filename)
     except:
