@@ -77,8 +77,17 @@ def track_page_views(response):
     with open(STAT_FILE, "w") as f:
         json.dump(data, f, indent=4)
 
+    try:
+        ip = request.headers.get("X-Forwarded-For", request.remote_addr)
+
+        if ip:
+            ip = ip.split(",")[0].strip()
+
+    except:
+        ip = request.remote_addr
+
     
-    log("ACCESS", f"{request.path}", request.remote_addr)
+    log("ACCESS", f"{request.path}", ip)
 
 
     return response
@@ -141,7 +150,7 @@ def shorten():
             except:
                 ip = request.remote_addr
 
-            log("URL_SHORT", f"{original_url} > {short_url}", request.remote_addr)
+            log("URL_SHORT", f"{original_url} > {short_url}", ip)
 
     return render_template("shorten.html", short_url=short_url)
 
@@ -259,7 +268,16 @@ def mktable6v6():
             with open(STAT_FILE, "w") as f:
                 json.dump(data, f, indent=4)
 
-            log("MAKE_TABLE", f"{filename}", request.remote_addr)
+            try:
+                ip = request.headers.get("X-Forwarded-For", request.remote_addr)
+
+                if ip:
+                    ip = ip.split(",")[0].strip()
+
+            except:
+                ip = request.remote_addr
+
+            log("MAKE_TABLE", f"{filename}", ip)
 
             return redirect("/table/" + filename)
     except:
