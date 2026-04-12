@@ -132,6 +132,15 @@ def shorten():
 
             short_url = "https://nitthenat.com/r/" + code
 
+            try:
+                ip = request.headers.get("X-Forwarded-For", request.remote_addr)
+
+                if ip:
+                    ip = ip.split(",")[0].strip()
+
+            except:
+                ip = request.remote_addr
+
             log("URL_SHORT", f"{original_url} > {short_url}", request.remote_addr)
 
     return render_template("shorten.html", short_url=short_url)
