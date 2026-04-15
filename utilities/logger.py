@@ -8,8 +8,8 @@ from utilities.sqldb_connection import SERVER, DATABASE, USERNAME, PASSWORD
 
 # ---- CONNECTION STRING ----
 conn_str = (
-    "DRIVER={ODBC Driver 18 for SQL Server};"
-    #"DRIVER={SQL Server};"
+    #"DRIVER={ODBC Driver 18 for SQL Server};"
+    "DRIVER={SQL Server};"
     f"SERVER={SERVER};"
     f"DATABASE={DATABASE};"
     f"UID={USERNAME};"

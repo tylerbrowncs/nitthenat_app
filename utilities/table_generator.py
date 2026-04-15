@@ -2,8 +2,8 @@ import requests
 import os
 from io import BytesIO
 from PIL import Image, ImageDraw, ImageFont
-
 from datetime import datetime
+from functools import lru_cache
 
 # ============================
 # THEME
@@ -26,7 +26,13 @@ FLAG_SIZE = (85, 55)
 SCALE = 0.4
 
 # ============================
-# FONT LOADER
+# NETWORK SESSION (faster HTTP)
+# ============================
+
+session = requests.Session()
+
+# ============================
+# FONT LOADER (CACHED)
 # ============================
 
 PROJECT_FONT_PATH = os.path.join(
@@ -52,33 +58,49 @@ def find_font():
     return None
 
 FONT_PATH = find_font()
+FONT_CACHE = {}
 
 def load_font(size):
-    if FONT_PATH:
-        return ImageFont.truetype(FONT_PATH, size)
-    return ImageFont.load_default()
+    if size not in FONT_CACHE:
+        if FONT_PATH:
+            FONT_CACHE[size] = ImageFont.truetype(FONT_PATH, size)
+        else:
+            FONT_CACHE[size] = ImageFont.load_default()
+    return FONT_CACHE[size]
 
 # ============================
-# HELPERS
+# IMAGE CACHE (VERY IMPORTANT)
 # ============================
 
-def load_image(url):
+@lru_cache(maxsize=128)
+def load_image_cached(url):
     try:
-        r = requests.get(url, timeout=5)
+        r = session.get(url, timeout=5)
         return Image.open(BytesIO(r.content)).convert("RGBA")
     except:
         return None
 
+# ============================
+# FLAG CACHE (DISK + MEMORY)
+# ============================
+
+FLAG_CACHE_DIR = "flag_cache"
+os.makedirs(FLAG_CACHE_DIR, exist_ok=True)
+
+@lru_cache(maxsize=256)
 def get_flag(code):
+    path = os.path.join(FLAG_CACHE_DIR, f"{code}.png")
+
+    if os.path.exists(path):
+        return Image.open(path).convert("RGBA")
+
     url = f"https://flagcdn.com/w80/{code.lower()}.png"
-    img = load_image(url)
+    img = load_image_cached(url)
     if not img:
         return None
 
-    width = 100
-    height = 65
-    radius = 30
-    border = 4
+    width, height = 100, 65
+    radius, border = 30, 4
 
     scale = max(width / img.width, height / img.height)
     img = img.resize(
@@ -116,11 +138,39 @@ def get_flag(code):
     result.paste(border_shape, (0, 0), border_shape)
     result.paste(img, (border, border), img)
 
+    result.save(path)
     return result
 
+# ============================
+# TEXT CACHE
+# ============================
+
+TEXT_CACHE = {}
+
 def text_size(draw, text, font):
-    bbox = draw.textbbox((0, 0), text, font=font)
-    return bbox[2] - bbox[0], bbox[3] - bbox[1]
+    key = (text, font.size)
+    if key not in TEXT_CACHE:
+        bbox = draw.textbbox((0, 0), text, font=font)
+        TEXT_CACHE[key] = (bbox[2]-bbox[0], bbox[3]-bbox[1])
+    return TEXT_CACHE[key]
+
+# ============================
+# SHAPE CACHE
+# ============================
+
+@lru_cache(maxsize=16)
+def get_panel_mask(width, height, radius):
+    mask = Image.new("L", (width, height), 0)
+    ImageDraw.Draw(mask).rounded_rectangle(
+        [0,0,width,height],
+        radius=radius,
+        fill=255
+    )
+    return mask
+
+# ============================
+# MEDAL
+# ============================
 
 def draw_medal(base, x, y, color, size=50):
     medal = Image.new("RGBA", (size, size), (0, 0, 0, 0))
@@ -137,10 +187,20 @@ def draw_medal(base, x, y, color, size=50):
 # MAIN GENERATOR
 # ============================
 
-def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title, sub_text=datetime.now().strftime("%b %d, %Y"), ACCENTS = (145, 70, 255)):
+def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title,
+                       sub_text=datetime.now().strftime("%b %d, %Y"),
+                       ACCENTS=(145, 70, 255)):
 
     teams = data["teams"]
 
+    # Pre-sort once
+    for team in teams:
+        team["total"] = sum(p["score"] for p in team["members"])
+        team["members"].sort(key=lambda p: p["score"], reverse=True)
+
+    teams.sort(key=lambda t: t["total"], reverse=True)
+
+    # Fonts
     title_font = load_font(115)
     team_font = load_font(75)
     player_font = load_font(80)
@@ -150,20 +210,13 @@ def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title, sub_text=datet
     date_font = load_font(40)
     score_font = load_font(80)
 
-    for team in teams:
-        team["total"] = sum(p["score"] for p in team["members"])
-
-
-
-
-    teams = sorted(teams, key=lambda t: t["total"], reverse=True)
-
+    # Top players
     all_players = [p for t in teams for p in t["members"]]
     top_players = sorted(all_players, key=lambda p: p["score"], reverse=True)[:3]
-
     medal_colors = [(255,215,0), (200,200,200), (205,127,50)]
     player_medals = {id(p): medal_colors[i] for i,p in enumerate(top_players)}
 
+    # Layout
     columns = 2
     col_width = (WIDTH - PADDING*2 - COLUMN_GAP) // columns
     max_players = max(len(t["members"]) for t in teams)
@@ -171,45 +224,37 @@ def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title, sub_text=datet
     panel_height = TEAM_HEADER_HEIGHT + max_players*ROW_HEIGHT + BOTTOM_PADDING
     height = PADDING*2 + TITLE_HEIGHT + panel_height
 
+    # Base
     base = Image.new("RGBA", (WIDTH, height), TWITCH_DARK + (255,))
-    background = load_image(BACKGROUND_IMAGE_URL)
+
+    background = load_image_cached(BACKGROUND_IMAGE_URL)
     if background:
         background = background.resize((WIDTH, height))
         base.paste(background, (0, 0))
 
-    img = base.copy()
-    draw = ImageDraw.Draw(img)
+    draw = ImageDraw.Draw(base)
 
-    if len(title) > 35:
-        title_font = load_font(60)
-    else:
-        title_font = load_font(80)
+    # Title
+    title_font = load_font(60 if len(title) > 35 else 80)
 
     draw.text((WIDTH//2, PADDING-25), title,
-              font=title_font,
-              fill=ACCENTS,
-              anchor="mm",
-              stroke_width=4,
-              stroke_fill=(0,0,0))
-    
+              font=title_font, fill=ACCENTS,
+              anchor="mm", stroke_width=4, stroke_fill=(0,0,0))
 
     draw.text((WIDTH//2, PADDING+60), sub_text,
-              font=date_font,
-              fill=WHITE,
-              anchor="mm",
-              stroke_width=4,
-              stroke_fill=(0,0,0))
-    
+              font=date_font, fill=WHITE,
+              anchor="mm", stroke_width=4, stroke_fill=(0,0,0))
+
     start_y = PADDING + TITLE_HEIGHT - 40
     panel_positions = []
 
     for i, team in enumerate(teams):
-
         x = PADDING + i * (col_width + COLUMN_GAP)
         y = start_y
         panel_positions.append([x, y, x+col_width, y+panel_height])
 
         radius = 60
+
         if len(team["name"]) > 32:
             team_font = load_font(40)
         elif len(team["name"]) > 18:
@@ -217,55 +262,34 @@ def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title, sub_text=datet
         else:
             team_font = load_font(75)
 
-
         panel = Image.new("RGBA", (col_width, panel_height), (0,0,0,0))
-
         overlay = Image.new("RGBA", (col_width, panel_height), (40,40,45,200))
 
-        if team.get("icon"):
-            icon = load_image(team["icon"])
-            if icon:
-                icon = icon.resize((col_width, panel_height), Image.LANCZOS)
-                icon = Image.alpha_composite(icon, overlay)
-                panel.paste(icon, (0,0), icon)
-            else:
-                panel.paste(overlay, (0,0), overlay)
+        icon = load_image_cached(team.get("icon", ""))
+        if icon:
+            icon = icon.resize((col_width, panel_height), Image.LANCZOS)
+            icon = Image.alpha_composite(icon, overlay)
+            panel.paste(icon, (0,0), icon)
         else:
             panel.paste(overlay, (0,0), overlay)
 
-        mask = Image.new("L", (col_width, panel_height), 0)
-        ImageDraw.Draw(mask).rounded_rectangle(
-            [0,0,col_width,panel_height],
-            radius=radius,
-            fill=255
-        )
+        mask = get_panel_mask(col_width, panel_height, radius)
 
         rounded_panel = Image.new("RGBA", (col_width, panel_height))
         rounded_panel.paste(panel, (0,0), mask)
 
-        img.paste(rounded_panel, (x,y), rounded_panel)
+        base.paste(rounded_panel, (x,y), rounded_panel)
 
         draw.rounded_rectangle(
-             [x,y,x+col_width,y+panel_height],
-             radius=radius,
-             outline=ACCENTS,
-             width=6
-         )
+            [x,y,x+col_width,y+panel_height],
+            radius=radius, outline=ACCENTS, width=6
+        )
 
         name_y = y + 75
         name = team["name"]
-        name_w,_ = text_size(draw, name, team_font)
 
         draw.text((x+col_width//2, name_y),
                   name, font=team_font, fill=WHITE, anchor="mm")
-
-        medal_x = x + col_width//2 - (name_w//2) - 80
-        medal_y = name_y - 40
-
-        # if i == 0:
-        #     draw_medal(img, medal_x, medal_y, (255,215,0))
-        # elif i == 1:
-        #     draw_medal(img, medal_x, medal_y, (200,200,200))
 
         draw.line((x+60, y+TEAM_HEADER_HEIGHT-25,
                    x+col_width-60, y+TEAM_HEADER_HEIGHT-25),
@@ -273,22 +297,16 @@ def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title, sub_text=datet
 
         py = y + TEAM_HEADER_HEIGHT
 
-        for player in sorted(team["members"], key=lambda p:p["score"], reverse=True):
-
+        for player in team["members"]:
             name = player["name"]
-
-            if len(name) > 16:
-                player_font = load_font(45)
-            else:
-                player_font = load_font(80)
+            player_font = load_font(45 if len(name) > 16 else 80)
 
             score = str(player["score"])
-
             name_w, name_h = text_size(draw, name, player_font)
 
             flag = get_flag(player["country"])
             if flag:
-                img.paste(flag, (x+60, py+(ROW_HEIGHT-FLAG_SIZE[1])//2), flag)
+                base.paste(flag, (x+60, py+(ROW_HEIGHT-FLAG_SIZE[1])//2), flag)
 
             text_y = py + (ROW_HEIGHT-name_h)//2
 
@@ -296,7 +314,7 @@ def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title, sub_text=datet
                       name, font=player_font, fill=WHITE)
 
             if id(player) in player_medals:
-                draw_medal(img,
+                draw_medal(base,
                            x+180+name_w+15,
                            text_y-10,
                            player_medals[id(player)],
@@ -315,20 +333,17 @@ def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title, sub_text=datet
                   fill=WHITE,
                   anchor="mm")
 
+    # Diff box
     if len(teams) == 2:
         diff = teams[0]["total"] - teams[1]["total"]
         diff_text = f"+{diff}" if diff > 0 else str(diff)
 
-        left = panel_positions[0]
-        right = panel_positions[1]
+        left, right = panel_positions
 
-        text_w,text_h = text_size(draw, diff_text, diff_font)
+        text_w, text_h = text_size(draw, diff_text, diff_font)
 
-        padding_x = 200
-        padding_y = 100
-
-        box_w = text_w + padding_x
-        box_h = text_h + padding_y
+        padding_x, padding_y = 200, 100
+        box_w, box_h = text_w + padding_x, text_h + padding_y
 
         cx = (left[2] + right[0]) // 2
         cy = left[3]
@@ -348,6 +363,7 @@ def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title, sub_text=datet
                   fill=WHITE,
                   anchor="mm")
 
+    # Watermark
     draw.text((WIDTH-40, height-30),
               "Developed by TMoney19 | nitthenat.com",
               font=watermark_font,
@@ -356,7 +372,7 @@ def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title, sub_text=datet
               stroke_width=3,
               stroke_fill=(0,0,0))
 
-    final = img
+    final = base
 
     if SCALE != 1.0:
         final = final.resize(
@@ -364,12 +380,10 @@ def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title, sub_text=datet
             Image.LANCZOS
         )
 
-    # Remove transparency completely
     final = final.convert("RGB")
-
     final.save(output)
-    print("Saved to", output)
 
+    print("Saved to", output)
 
 # ============================
 # TEST
