@@ -9,34 +9,44 @@
     document.addEventListener('DOMContentLoaded', () => {
       const tooltip = document.getElementById('tooltip')
       const container = document.querySelector('.map-container')
+      const modeSelect = document.getElementById('tt-mode')
     
+      let mode = 'normal'
       let hoverTimeout
+    
+      // Change mode from dropdown
+      modeSelect.addEventListener('change', () => {
+        mode = modeSelect.value
+      })
     
       document.querySelectorAll('.track').forEach((track) => {
         track.addEventListener('mouseenter', () => {
           const name = track.dataset.name
-          const time = track.dataset.time
+    
+          const time = mode === 'shroom' ? track.dataset.timeShroom : track.dataset.timeNormal
     
           tooltip.innerHTML = `
-            <div class="tt-card">
-              <div class="tt-header">
-                <div class="tt-player">NitTheNat</div>
-                <div class="tt-badge">TT</div>
-              </div>
+                <div class="tt-card">
+                  <div class="tt-header">
+                    <div class="tt-player">NitTheNat</div>
+                    <div class="tt-badge">
+                      ${mode === 'shroom' ? 'Shroom TT 🍄' : 'TT'}
+                    </div>
+                  </div>
     
-              <div class="tt-divider"></div>
+                  <div class="tt-divider"></div>
     
-              <div class="tt-row">
-                <span class="tt-label">Track</span>
-                <span class="tt-value">${name}</span>
-              </div>
+                  <div class="tt-row">
+                    <span class="tt-label">Track</span>
+                    <span class="tt-value">${name}</span>
+                  </div>
     
-              <div class="tt-row">
-                <span class="tt-label">Time</span>
-                <span class="tt-value tt-time">${time}</span>
-              </div>
-            </div>
-          `
+                  <div class="tt-row">
+                    <span class="tt-label">Time</span>
+                    <span class="tt-value tt-time">${time}</span>
+                  </div>
+                </div>
+              `
     
           hoverTimeout = setTimeout(() => {
             tooltip.classList.add('show')
@@ -59,23 +69,30 @@
         })
       })
     })
+    
   </script>
 
   <link rel="stylesheet" href="{{ url_for('static', filename='css/timetrials.css') }}" />
 {% endblock %}
 
 {% block content %}
-
   <header class="hero-banner">
-        <h1>Mario Kart World <br>Time Trials</h1>
-    </header>
+    <h1>Mario Kart World <br />Time Trials</h1>
+  </header>
+
+  <div class="tt-controls">
+    <select id="tt-mode" class="styled-select">
+      <option value="normal">Non-Shroom</option>
+      <option value="shroom">Shroom</option>
+    </select>
+  </div>
 
   <div class="map-container">
     <img src="{{ url_for('static', filename='images/mkworldmap.jpg') }}" class="map-img" />
 
     <svg viewBox="0 0 1000 600">
       {% for track in tracks %}
-        <circle cx="{{ track.x }}" cy="{{ track.y }}" r="50" class="track" data-name="{{ track.name }}" data-time="{{ track.time }}" />
+        <circle cx="{{ track.x }}" cy="{{ track.y }}" r="50" class="track" data-name="{{ track.name }}" data-time-normal="{{ track.time }}" data-time-shroom="{{ track.time_shroom }}" />
       {% endfor %}
     </svg>
 
