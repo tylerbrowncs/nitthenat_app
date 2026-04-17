@@ -9,3 +9,4 @@ test.png
 stats.json
 utilities/sqldb_connection.py
 static_data.json
+flag_cache/
