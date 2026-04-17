@@ -32,6 +32,31 @@ $(document).ready(function() {
         }
     });
 });
+
+function handleSubmit(form) {
+    // Let browser validate first
+    if (!form.checkValidity()) {
+        return true; // allow normal validation UI
+    }
+
+    const btn = form.querySelector("button");
+
+    // Prevent double clicks
+    if (btn.disabled) {
+        return false;
+    }
+
+    // Disable button AFTER validation passes
+    btn.disabled = true;
+    btn.innerText = "Generating...";
+
+    // Make button gray
+    btn.style.backgroundColor = "#ccc";
+    btn.style.color = "#666";
+    btn.style.cursor = "not-allowed";
+
+    return true; // allow submit
+}
 </script>
 
 <link rel="stylesheet" href="{{ url_for('static', filename='css/generator6v6.css') }}">
@@ -60,7 +85,7 @@ $(document).ready(function() {
         {% endif %}
         <h3>Styling Options</h3>
 
-        <form method="POST">
+        <form method="POST" onsubmit="return handleSubmit(this)">
         
             <input 
                 type="text" 
