@@ -1,0 +1,157 @@
+.map-container {
+    position: relative;
+    width: 100%;
+    max-width: 1250px;
+    margin: 0 auto;
+    border:#8c6cff 5px solid;
+    border-radius: 20px;
+}
+
+.hero-banner {
+    width: 100%;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hero-banner h1 {
+    font-size: 3rem;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: white;
+    text-align: center;
+}
+
+.map-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 15px;
+}
+
+.map-container svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.track {
+    r: 50;
+    fill: transparent;
+    stroke: transparent;
+    stroke-width: 3;
+    transition: ease-in 0.5s;
+
+}
+
+.track:hover {
+    stroke: #8c6cff;
+    fill: #8c6cff2f;
+}
+
+#tooltip {
+    position: absolute;
+    pointer-events: none;
+    z-index: 10;
+
+    opacity: 0;
+    transform: translate(14px, 14px) scale(0.95);
+
+    transition: 
+        opacity 0.5s ease-in-out,
+        transform 0.5s ease-in-out;
+
+    visibility: hidden;
+}
+
+#tooltip.show {
+    opacity: 1;
+    transform: translate(14px, 14px) scale(1);
+    visibility: visible;
+
+        transition: 
+        opacity 0.5s ease-in-out,
+        transform 0.5s ease-in-out;
+}
+
+.tt-card {
+    min-width: 160px;
+    padding: 12px 14px;
+    border-radius: 12px;
+
+    background: linear-gradient(145deg, rgba(20, 20, 35, 0.9), rgba(10, 10, 20, 0.95));
+    backdrop-filter: blur(8px);
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.4),
+        0 0 15px rgba(140, 100, 255, 0.25);
+
+    font-family: 'Segoe UI', sans-serif;
+    color: white;
+}
+
+/* Header */
+.tt-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tt-player {
+    font-size: 13px;
+    font-weight: 700;
+    color: #8c6cff;
+    letter-spacing: 0.5px;
+}
+
+.tt-badge {
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: rgba(140, 100, 255, 0.2);
+    color: #cbb8ff;
+}
+
+.tt-divider {
+    height: 1px;
+    margin: 8px 0;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
+}
+
+.tt-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+}
+
+.tt-label {
+    font-size: 11px;
+    color: #aaa;
+}
+
+.tt-value {
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.tt-time {
+    color: #8c6cff;
+}
+
+@media (max-width: 600px) {
+    .track {
+        r: 6;
+
+    }
+
+    .map-container {
+        max-width: 900px;
+        width: 95%;
+    }
+}

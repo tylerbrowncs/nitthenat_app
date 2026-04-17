@@ -8,3 +8,4 @@ static/images/tables/*
 test.png
 stats.json
 utilities/sqldb_connection.py
+static_data.json

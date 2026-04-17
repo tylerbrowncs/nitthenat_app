@@ -8,7 +8,7 @@ from utilities.sqldb_connection import SERVER, DATABASE, USERNAME, PASSWORD
 
 # ---- CONNECTION STRING ----
 conn_str = (
-    "DRIVER={ODBC Driver 18 for SQL Server};"
+    "DRIVER={ODBC Driver 17 for SQL Server};"
     #"DRIVER={SQL Server};"
     f"SERVER={SERVER};"
     f"DATABASE={DATABASE};"
@@ -16,6 +16,8 @@ conn_str = (
     f"PWD={PASSWORD};"
     "TrustServerCertificate=yes;"
 )
+
+dev_skip_logging = False
 
 def log(log_type: str, message: str, user: str):
     """
@@ -27,6 +29,9 @@ def log(log_type: str, message: str, user: str):
     """
     lon = pytz.timezone('Europe/London')
     log_datetime = datetime.now(lon)
+
+    if dev_skip_logging:
+        return
 
     # Validate log type
     if log_type not in ALLOWED_LOG_TYPES:

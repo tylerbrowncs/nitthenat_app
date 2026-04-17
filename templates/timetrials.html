@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Time Trials | NitTheNat
+{% endblock %}
+
+{% block head %}
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const tooltip = document.getElementById('tooltip')
+      const container = document.querySelector('.map-container')
+    
+      let hoverTimeout
+    
+      document.querySelectorAll('.track').forEach((track) => {
+        track.addEventListener('mouseenter', () => {
+          const name = track.dataset.name
+          const time = track.dataset.time
+    
+          tooltip.innerHTML = `
+            <div class="tt-card">
+              <div class="tt-header">
+                <div class="tt-player">NitTheNat</div>
+                <div class="tt-badge">TT</div>
+              </div>
+    
+              <div class="tt-divider"></div>
+    
+              <div class="tt-row">
+                <span class="tt-label">Track</span>
+                <span class="tt-value">${name}</span>
+              </div>
+    
+              <div class="tt-row">
+                <span class="tt-label">Time</span>
+                <span class="tt-value tt-time">${time}</span>
+              </div>
+            </div>
+          `
+    
+          hoverTimeout = setTimeout(() => {
+            tooltip.classList.add('show')
+          }, 80)
+        })
+    
+        track.addEventListener('mousemove', (e) => {
+          const rect = container.getBoundingClientRect()
+    
+          const x = e.clientX - rect.left + 12
+          const y = e.clientY - rect.top + 12
+    
+          tooltip.style.left = x + 'px'
+          tooltip.style.top = y + 'px'
+        })
+    
+        track.addEventListener('mouseleave', () => {
+          clearTimeout(hoverTimeout)
+          tooltip.classList.remove('show')
+        })
+      })
+    })
+  </script>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/timetrials.css') }}" />
+{% endblock %}
+
+{% block content %}
+
+  <header class="hero-banner">
+        <h1>Mario Kart World <br>Time Trials</h1>
+    </header>
+
+  <div class="map-container">
+    <img src="{{ url_for('static', filename='images/mkworldmap.jpg') }}" class="map-img" />
+
+    <svg viewBox="0 0 1000 600">
+      {% for track in tracks %}
+        <circle cx="{{ track.x }}" cy="{{ track.y }}" r="50" class="track" data-name="{{ track.name }}" data-time="{{ track.time }}" />
+      {% endfor %}
+    </svg>
+
+    <div id="tooltip"></div>
+  </div>
+{% endblock %}
