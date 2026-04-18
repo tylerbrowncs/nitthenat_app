@@ -59,10 +59,10 @@
         </button>
 
         <div class="dropdown-container">
-            <a href="{{ url_for('mkw100') }}">100% Speedrun</a>
+            <a href="{{ url_for('posts.mkw100') }}">100% Speedrun</a>
         </div>
 
-        <a href="{{ url_for('tourneys') }}">
+        <a href="{{ url_for('pages.tourneys') }}">
             <i class="fa fa-users"></i> Tournaments
         </a>
 
@@ -73,8 +73,8 @@
         </button>
 
         <div class="dropdown-container">
-            <a href="{{ url_for('shorten') }}">URL Shortener</a>
-            <a href="{{ url_for('mktable6v6') }}">6v6 Table Generator</a>
+            <a href="{{ url_for('shortener.shorten') }}">URL Shortener</a>
+            <a href="{{ url_for('tables.mktable6v6') }}">6v6 Table Generator</a>
         </div>
 
         <a href="https://twitch.tv/nitthenat">

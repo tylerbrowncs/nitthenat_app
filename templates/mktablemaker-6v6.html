@@ -1,218 +1,152 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
-{% block title %}NitTheNat | 6v6 Table{% endblock %}
+{% block title %}
+  NitTheNat | 6v6 Table
+{% endblock %}
 
 {% block head %}
-<script>
-$(document).ready(function() {
-    $('.searchable').select2({
-        placeholder: "Select a country",
+  <script>
+    $(document).ready(function () {
+      $('.searchable').select2({
+        placeholder: 'Select a country',
         allowClear: false,
         width: '200px'
-    });
-
-    $(document).on('focus', '.select2-selection--single', function () {
-        const select = $(this).closest('.select2-container').prev('select');
-        select.select2('open');
-    });
-
-    $(document).on('select2:open', function () {
-        setTimeout(function() {
-            const searchField = document.querySelector('.select2-container--open .select2-search__field');
-            if (searchField) {
-                searchField.focus();
-            }
-        }, 0);
-    });
-
-    $(document).on('select2:select', function(e) {
-        const $next = $(e.target).closest('.select2').nextAll('input, select, button').first();
+      })
+    
+      $(document).on('focus', '.select2-selection--single', function () {
+        const select = $(this).closest('.select2-container').prev('select')
+        select.select2('open')
+      })
+    
+      $(document).on('select2:open', function () {
+        setTimeout(function () {
+          const searchField = document.querySelector('.select2-container--open .select2-search__field')
+          if (searchField) {
+            searchField.focus()
+          }
+        }, 0)
+      })
+    
+      $(document).on('select2:select', function (e) {
+        const $next = $(e.target).closest('.select2').nextAll('input, select, button').first()
         if ($next.length) {
-            $next.focus();
+          $next.focus()
         }
-    });
-});
-
-function handleSubmit(form) {
-    // Let browser validate first
-    if (!form.checkValidity()) {
-        return true; // allow normal validation UI
+      })
+    })
+    
+    function handleSubmit(form) {
+      if (!form.checkValidity()) {
+        return true
+      }
+    
+      const btn = form.querySelector('button')
+    
+      if (btn.disabled) {
+        return false
+      }
+    
+      btn.disabled = true
+      btn.innerText = 'Generating...'
+      btn.style.backgroundColor = '#ccc'
+      btn.style.color = '#666'
+      btn.style.cursor = 'not-allowed'
+    
+      return true
     }
+    
+    window.addEventListener('pageshow', function (event) {
+      document.querySelectorAll("form button[type='submit']").forEach((btn) => {
+        btn.disabled = false
+        btn.innerText = 'Create'
+    
+        btn.style.backgroundColor = ''
+        btn.style.color = ''
+        btn.style.cursor = ''
+      })
+    })
+  </script>
 
-    const btn = form.querySelector("button");
-
-    // Prevent double clicks
-    if (btn.disabled) {
-        return false;
-    }
-
-    // Disable button AFTER validation passes
-    btn.disabled = true;
-    btn.innerText = "Generating...";
-
-    // Make button gray
-    btn.style.backgroundColor = "#ccc";
-    btn.style.color = "#666";
-    btn.style.cursor = "not-allowed";
-
-    return true; // allow submit
-}
-</script>
-
-<link rel="stylesheet" href="{{ url_for('static', filename='css/generator6v6.css') }}">
-
-
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/generator6v6.css') }}" />
 {% endblock %}
 
 {% block content %}
-
-<div class="mkw-page">
-
+  <div class="mkw-page">
     <header class="hero-banner">
-        <h1>Table Generator</h1>
+      <h1>Table Generator</h1>
     </header>
 
     <main class="content-panel">
-         
+      <a href="{{ url_for('home') }}" class="back-link">← Home</a>
 
-        <a href="{{ url_for('home') }}" class="back-link">← Home</a>
+      <h2>6v6 War Table Generator</h2>
 
-        <h2>6v6 War Table Generator</h2>
+      {% if filename %}
+        <img class="result" src="https://nitthenat.com/table/{{ filename }}" />
+        <br />
+      {% endif %}
+      <h3>Styling Options</h3>
 
-        {% if filename %}
-            <img class="result" src="https://nitthenat.com/table/{{filename}}">
-            <br>
-        {% endif %}
-        <h3>Styling Options</h3>
+      <form method="POST" onsubmit="return handleSubmit(this)">
+        <input type="text" name="title_text" placeholder="Title (optional)" default="WAR RESULT" />
+        <input style="width: 250px;" type="text" name="subtitle" placeholder="Subtitle / Date (default: GMT Date)" default="EMPTY" />
+        <br />
+        <input type="URL" style="width: 97%;" name="background_url" placeholder="Background URL (optional)" default="EMPTY" />
+        <br /><br />
+        <label for="favcolor-tables" class="color-label">Accent Color</label>
+        <input type="color" id="favcolor-tables" name="favcolor" value="rgb(145, 70, 255)" />
 
-        <form method="POST" onsubmit="return handleSubmit(this)">
-        
-            <input 
-                type="text" 
-                name="title_text"
-                placeholder="Title (optional)"
-                default="WAR RESULT"
-            >
-            <input 
-                style="width: 250px;"
-                type="text" 
-                name="subtitle"
-                placeholder="Subtitle / Date (default: GMT Date)"
-                default="EMPTY"
-            >
-            <br>
-            <input 
-                type="URL" 
-                style="width: 97%;"
-                name="background_url"
-                placeholder="Background URL (optional)"
-                default="EMPTY"
-            >
-            <br><br>
-            <label for="favcolor-tables" class="color-label">Accent Color</label>
-            <input type="color" id="favcolor-tables" name="favcolor" value="rgb(145, 70, 255)">
+        <h3>Team 1</h3>
 
-    
-            <h3> Team 1 </h3>
+        <input type="text" name="team1_name" placeholder="Team Name" required />
 
-            <input 
-                type="text" 
-                name="team1_name"
-                placeholder="Team Name"
-                required
-            >
+        <br />
+        <input type="URL" name="team1_icon" placeholder="Team Icon URL (optional)" />
+        <br />
+        {% for i in range(6) %}
+          <br />
+          <input type="text" name="team1_p{{ i }}_name" placeholder="Player Name" required />
+          <input type="Number" name="team1_p{{ i }}_score" placeholder="Player Score" required />
 
-            <br>
-            <input 
-                type="URL" 
-                name="team1_icon"
-                placeholder="Team Icon URL (optional)"
-            >
-            <br>
-            {% for i in range(6) %}
-                <br>
-                <input
-                    type="text"
-                    name="team1_p{{ i }}_name"
-                    placeholder="Player Name"
-                    required
-                >
-                <input
-                    type="Number"
-                    name="team1_p{{ i }}_score"
-                    placeholder="Player Score"
-                    required
-                >
-
-                <select name="team1_p{{ i }}_country" class="searchable">
-                    <option></option>
-                    {% for country in COUNTRY_NAMES %}
-                        <option value="{{ country }}">{{ country }}</option>
-                    {% endfor %}
-                    
-                </select>
-
+          <select name="team1_p{{ i }}_country" class="searchable">
+            <option></option>
+            {% for country in COUNTRY_NAMES %}
+              <option value="{{ country }}">{{ country }}</option>
             {% endfor %}
+          </select>
+        {% endfor %}
 
+        <h3>Team 2</h3>
 
-            <h3> Team 2 </h3>
+        <input type="text" name="team2_name" placeholder="Team Name" required />
 
-            <input 
-                type="text" 
-                name="team2_name"
-                placeholder="Team Name"
-                required
-            >
+        <br />
+        <input type="URL" name="team2_icon" placeholder="Team Icon URL (optional)" />
+        <br />
+        {% for i in range(6) %}
+          <br />
+          <input type="text" name="team2_p{{ i }}_name" placeholder="Player Name" required />
+          <input type="Number" name="team2_p{{ i }}_score" placeholder="Player Score" required />
 
-            <br>
-            <input 
-                type="URL" 
-                name="team2_icon"
-                placeholder="Team Icon URL (optional)"
-            >
-            <br>
-            {% for i in range(6) %}
-                <br>
-                <input
-                    type="text"
-                    name="team2_p{{ i }}_name"
-                    placeholder="Player Name"
-                    required
-                >
-                <input
-                    type="Number"
-                    name="team2_p{{ i }}_score"
-                    placeholder="Player Score"
-                    required
-                >
-
-                <select name="team2_p{{ i }}_country" class="searchable">
-                    <option></option>
-                    {% for country in COUNTRY_NAMES %}
-                        <option value="{{ country }}">{{ country }}</option>
-                    {% endfor %}
-                    
-                </select>
-
+          <select name="team2_p{{ i }}_country" class="searchable">
+            <option></option>
+            {% for country in COUNTRY_NAMES %}
+              <option value="{{ country }}">{{ country }}</option>
             {% endfor %}
+          </select>
+        {% endfor %}
 
-                <br>
-                <button type="submit">Create</button>
-
-        </form>
-
+        <br />
+        <button type="submit">Create</button>
+      </form>
     </main>
+  </div>
 
-</div>
-
-<script>
+  <script>
     $('.searchable').select2({
-    placeholder: "Select a country",
-    allowClear: false,
-    width: '200px'
-});
-</script>
-
+      placeholder: 'Select a country',
+      allowClear: false,
+      width: '200px'
+    })
+  </script>
 {% endblock %}
-
-

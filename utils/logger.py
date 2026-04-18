@@ -4,7 +4,7 @@ from datetime import datetime
 # Allowed log types
 ALLOWED_LOG_TYPES = {"INFO", "WARNING", "ERROR", "DEBUG","ACCESS","TEST", "MAKE_TABLE", "URL_SHORT"}
 
-from utilities.sqldb_connection import SERVER, DATABASE, USERNAME, PASSWORD
+from utils.sqldb_connection import SERVER, DATABASE, USERNAME, PASSWORD
 
 # ---- CONNECTION STRING ----
 conn_str = (
