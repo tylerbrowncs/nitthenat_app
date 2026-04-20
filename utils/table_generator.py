@@ -6,8 +6,6 @@ from datetime import datetime
 from functools import lru_cache
 from io import BytesIO
 
-from db_queries.tables import get_image_bytes
-
 # ============================
 # THEME
 # ============================
@@ -16,10 +14,11 @@ ACCENTS = (145, 70, 255)
 TWITCH_GRAY = (40, 40, 45)
 TWITCH_DARK = (24, 24, 27)
 WHITE = (255, 255, 255)
+RED = (255, 0, 0)
 
 WIDTH = 2600
-PADDING = 120
-COLUMN_GAP = 120
+PADDING = 80
+COLUMN_GAP = 60
 TEAM_HEADER_HEIGHT = 160
 ROW_HEIGHT = 140
 TITLE_HEIGHT = 160
@@ -27,6 +26,8 @@ BOTTOM_PADDING = 200
 
 FLAG_SIZE = (85, 55)
 SCALE = 0.4
+
+RIGHT_BUFFER = 180
 
 # ============================
 # NETWORK SESSION (faster HTTP)
@@ -196,14 +197,13 @@ def generate_war_image(data, BACKGROUND_IMAGE_URL, title,
 
     teams = data["teams"]
 
-    # Pre-sort once
     for team in teams:
-        team["total"] = sum(p["score"] for p in team["members"])
-        team["members"].sort(key=lambda p: p["score"], reverse=True)
+        # UPDATED: Calculate total with penalties
+        team["total"] = sum(p["score"] - p.get("penalty", 0) for p in team["members"])
+        team["members"].sort(key=lambda p: p["score"] - p.get("penalty", 0), reverse=True)
 
     teams.sort(key=lambda t: t["total"], reverse=True)
 
-    # Fonts
     title_font = load_font(115)
     team_font = load_font(75)
     player_font = load_font(80)
@@ -212,14 +212,13 @@ def generate_war_image(data, BACKGROUND_IMAGE_URL, title,
     watermark_font = load_font(26)
     date_font = load_font(40)
     score_font = load_font(80)
+    penalty_font = load_font(50) # Added
 
-    # Top players
     all_players = [p for t in teams for p in t["members"]]
-    top_players = sorted(all_players, key=lambda p: p["score"], reverse=True)[:3]
+    top_players = sorted(all_players, key=lambda p: p["score"] - p.get("penalty", 0), reverse=True)[:3]
     medal_colors = [(255,215,0), (200,200,200), (205,127,50)]
     player_medals = {id(p): medal_colors[i] for i,p in enumerate(top_players)}
 
-    # Layout
     columns = 2
     col_width = (WIDTH - PADDING*2 - COLUMN_GAP) // columns
     max_players = max(len(t["members"]) for t in teams)
@@ -227,7 +226,6 @@ def generate_war_image(data, BACKGROUND_IMAGE_URL, title,
     panel_height = TEAM_HEADER_HEIGHT + max_players*ROW_HEIGHT + BOTTOM_PADDING
     height = PADDING*2 + TITLE_HEIGHT + panel_height
 
-    # Base
     base = Image.new("RGBA", (WIDTH, height), TWITCH_DARK + (255,))
 
     background = load_image_cached(BACKGROUND_IMAGE_URL)
@@ -237,7 +235,6 @@ def generate_war_image(data, BACKGROUND_IMAGE_URL, title,
 
     draw = ImageDraw.Draw(base)
 
-    # Title
     title_font = load_font(60 if len(title) > 35 else 80)
 
     draw.text((WIDTH//2, PADDING-25), title,
@@ -294,8 +291,8 @@ def generate_war_image(data, BACKGROUND_IMAGE_URL, title,
         draw.text((x+col_width//2, name_y),
                   name, font=team_font, fill=WHITE, anchor="mm")
 
-        draw.line((x+60, y+TEAM_HEADER_HEIGHT-25,
-                   x+col_width-60, y+TEAM_HEADER_HEIGHT-25),
+        draw.line((x+40, y+TEAM_HEADER_HEIGHT-25,
+                   x+col_width-40, y+TEAM_HEADER_HEIGHT-25),
                   fill=ACCENTS, width=4)
 
         py = y + TEAM_HEADER_HEIGHT
@@ -304,7 +301,9 @@ def generate_war_image(data, BACKGROUND_IMAGE_URL, title,
             name = player["name"]
             player_font = load_font(45 if len(name) > 14 else 65)
 
-            score = str(player["score"])
+            # UPDATED: Penalty logic
+            score_val = player["score"] - player.get("penalty", 0)
+            score = str(score_val)
             name_w, name_h = text_size(draw, name, player_font)
 
             flag = get_flag(player["country"])
@@ -324,19 +323,33 @@ def generate_war_image(data, BACKGROUND_IMAGE_URL, title,
                            45)
 
             score_w,_ = text_size(draw, score, score_font)
-
-            draw.text((x+col_width-80-score_w, text_y),
+            score_x = x + col_width - RIGHT_BUFFER - score_w
+            draw.text((score_x, text_y),
                       score, font=score_font, fill=WHITE)
+            
+            penalty = player.get("penalty", 0)
+            if penalty > 0:
+                p_text = f"(-{penalty})"
+                p_w, _ = text_size(draw, p_text, penalty_font)
+
+                draw.text(
+                    (score_x + score_w + 20, text_y + 15),
+                    p_text,
+                    font=penalty_font,
+                    fill=RED
+                )
 
             py += ROW_HEIGHT
 
-        draw.text((x+col_width//2, y+panel_height-130),
+        panel_center_x = x + (col_width // 2)
+        bottom_y = y + panel_height - 110 
+        
+        draw.text((panel_center_x, bottom_y),
                   str(team["total"]),
                   font=total_font,
                   fill=WHITE,
                   anchor="mm")
 
-    # Diff box
     if len(teams) == 2:
         diff = teams[0]["total"] - teams[1]["total"]
         diff_text = f"+{diff}" if diff > 0 else str(diff)
@@ -366,7 +379,6 @@ def generate_war_image(data, BACKGROUND_IMAGE_URL, title,
                   fill=WHITE,
                   anchor="mm")
 
-    # Watermark
     draw.text((WIDTH-40, height-30),
               "Developed by TMoney19 | nitthenat.com",
               font=watermark_font,
@@ -386,11 +398,10 @@ def generate_war_image(data, BACKGROUND_IMAGE_URL, title,
     final = final.convert("RGB")
 
     buffer = BytesIO()
-    final.save(buffer, format="PNG")  # or PNG if you prefer
+    final.save(buffer, format="PNG")
     image_bytes = buffer.getvalue()
 
     return image_bytes
-
 # ============================
 # TEST
 # ============================
@@ -403,24 +414,24 @@ if __name__ == "__main__":
                 "name": "feh yo man",
                 "icon": "https://media.discordapp.net/attachments/1231262211813539890/1281382817955053578/8K2ghC5Zz5odshlUDSTxzK8gtQx4P47p91nYtyJP_1.png?ex=69d0e9fe&is=69cf987e&hm=373e49d4561b6426313360a464ecb72ff4f65e30d25988608fdc7bc2e1f233c1&=&format=webp&quality=lossless",
                 "members": [
-                    {"name": "GlobFaceNatHead", "country": "gb-wls", "score": 154},
-                    {"name": "Alex", "country": "gb-eng", "score": 140},
-                    {"name": "Liam", "country": "gb-sct", "score": 130},
-                    {"name": "Mia", "country": "gb-nir", "score": 120},
-                    {"name": "Ethan", "country": "de", "score": 110},
-                    {"name": "Chloe", "country": "fr", "score": 100}
+                    {"name": "GlobFaceNatHead", "country": "gb-wls", "score": 154, "penalty": 0},
+                    {"name": "Alex", "country": "gb-eng", "score": 140, "penalty": 0},
+                    {"name": "Liam", "country": "gb-sct", "score": 130, "penalty": 44},
+                    {"name": "Mia", "country": "gb-nir", "score": 120, "penalty": 0},
+                    {"name": "Ethan", "country": "de", "score": 110, "penalty": 10},
+                    {"name": "Chloe", "country": "fr", "score": 100, "penalty": 0}
                 ]
             },
             {
                 "name": "abcdefghijklmnopqrstuvwxyz123456789123",
                 "icon": "https://media.discordapp.net/attachments/1231262211813539890/1281382817955053578/8K2ghC5Zz5odshlUDSTxzK8gtQx4P47p91nYtyJP_1.png?ex=69d0e9fe&is=69cf987e&hm=373e49d4561b6426313360a464ecb72ff4f65e30d25988608fdc7bc2e1f233c1&=&format=webp&quality=lossless",
                 "members": [
-                    {"name": "Hawkey", "country": "ca", "score": 160},
-                    {"name": "Chrin", "country": "us", "score": 1350},
-                    {"name": "Choko", "country": "ca", "score": 140},
-                    {"name": "Sparky", "country": "pr", "score": 120},
-                    {"name": "Azusa", "country": "us", "score": 110},
-                    {"name": "May", "country": "gb", "score": 90}
+                    {"name": "Hawkey", "country": "ca", "score": 160, "penalty": 0},
+                    {"name": "Chrin", "country": "us", "score": 50, "penalty": 25},
+                    {"name": "Choko", "country": "ca", "score": 140, "penalty": 0},
+                    {"name": "Sparky", "country": "pr", "score": 120, "penalty": 0},
+                    {"name": "Azusa", "country": "us", "score": 110, "penalty": 0},
+                    {"name": "May", "country": "gb", "score": 90, "penalty": 0}
                 ]
             }
         ]
@@ -428,8 +439,5 @@ if __name__ == "__main__":
 
     my_table = generate_war_image(sample_data, "https://catwithmonocle.com/wp-content/uploads/2023/04/smb-movie-mario-kart-3840x2160-1.jpg", "TM vs Influx | #21234 Semi-Finals", ACCENTS=(0, 255, 255))
 
-    from db_queries.tables import save_image
-
-    table_id = save_image(my_table)
-
-    print(table_id)
+    img = Image.open(BytesIO(my_table))
+    img.show()

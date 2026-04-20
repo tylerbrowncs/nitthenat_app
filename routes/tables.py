@@ -43,7 +43,8 @@ def mktable6v6():
             team1["members"] = [
                 {"name": request.form.get(f"team1_p{i}_name"), 
                 "country": COUNTRY_CODES[COUNTRY_NAMES.index(request.form.get(f"team1_p{i}_country"))],
-                "score": int(request.form.get(f"team1_p{i}_score"))
+                "score": int(request.form.get(f"team1_p{i}_score")),
+                "penalty": int(request.form.get(f"team1_p{i}_pen")),
                 } 
                 
                 for i in range(6)]
@@ -57,7 +58,8 @@ def mktable6v6():
             team2["members"] = [
                 {"name": request.form.get(f"team2_p{i}_name"), 
                 "country": COUNTRY_CODES[COUNTRY_NAMES.index(request.form.get(f"team2_p{i}_country"))],
-                "score": int(request.form.get(f"team2_p{i}_score"))
+                "score": int(request.form.get(f"team2_p{i}_score")),
+                "penalty": int(request.form.get(f"team2_p{i}_pen")),
                 } 
                 
                 for i in range(6)]
