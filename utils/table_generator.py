@@ -302,7 +302,7 @@ def generate_war_image(data, BACKGROUND_IMAGE_URL, title,
 
         for player in team["members"]:
             name = player["name"]
-            player_font = load_font(45 if len(name) > 14 else 75)
+            player_font = load_font(45 if len(name) > 14 else 65)
 
             score = str(player["score"])
             name_w, name_h = text_size(draw, name, player_font)
