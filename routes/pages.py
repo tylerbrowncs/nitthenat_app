@@ -1,8 +1,27 @@
-from flask import Blueprint, render_template
+from io import BytesIO
 
-import json
+from flask import Blueprint, render_template, send_file
+
+import json,os
+
+from db_queries.tables import get_image_bytes
 
 pages_bp = Blueprint("pages", __name__)
+
+@pages_bp.route("/tyler")
+def tyler():
+    
+    #FMw4FMjWsu
+
+    image_bytes = get_image_bytes("FMw4FMjWsu")
+
+    if not image_bytes:
+        return "Not found", 404
+
+    return send_file(
+        BytesIO(image_bytes),   # ← convert bytes → file-like object
+        mimetype="image/png"    # ← IMPORTANT: match your stored format
+    )
 
 @pages_bp.route("/tournements")
 def tourneys():
@@ -16,9 +35,6 @@ def zak():
 
 @pages_bp.route("/timetrials")
 def timetrials():
-
-    
-
     tracks = load_static_data()["tracks"]
     return render_template("timetrials.html", tracks=tracks)
 

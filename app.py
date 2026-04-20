@@ -4,7 +4,7 @@ from utils.generator_urls import generate_string
 from utils.table_generator import generate_war_image
 from utils.countires import COUNTRY_CODES, COUNTRY_NAMES
 from utils.liveChecker import isLive
-from utils.logger import log
+from db_queries.logger import log
 from datetime import datetime
 import json, os, threading
 

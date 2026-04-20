@@ -1,9 +1,12 @@
+from io import BytesIO
+
 from flask import Blueprint, request, current_app, render_template, redirect, send_file
 
 from datetime import datetime
 import threading, os
 
-from utils.logger import log
+from db_queries.logger import log
+from db_queries.tables import get_image_bytes, save_image
 from utils.countires import COUNTRY_CODES, COUNTRY_NAMES
 from utils.coloring import hex_to_rgb
 from utils.generator_urls import generate_string
@@ -15,8 +18,6 @@ tables_bp = Blueprint("tables", __name__)
 @tables_bp.route('/mk-tablemaker/6v6', methods=["GET", "POST"])
 def mktable6v6():
     try:
-        file_path_table = None
-        filename = None
 
         if request.method == "POST":
 
@@ -65,23 +66,16 @@ def mktable6v6():
                 "teams":[team1, team2]
             }
 
-            base_dir = current_app.root_path
-
-            filename = datetime.now().strftime("%d%m") + generate_string(
-                len(os.listdir(os.path.join(base_dir, "static", "images", "tables")))
-            ) + datetime.now().strftime("%y")+ ".png"
-
-            file_path_table = os.path.join(
-                base_dir,
-                "static",
-                "images",
-                "tables",
-                filename
-            )
-
             color = hex_to_rgb(request.form.get("favcolor"))
 
-            generate_war_image(data, file_path_table, bg_url, title, subtitle, color)
+            new_table = generate_war_image(data, bg_url, title, subtitle, color)
+
+            try:
+
+                table_id = save_image(new_table)
+
+            except:
+                return render_template("403.html")
 
             #TRACK TABLE CREATION
 
@@ -96,21 +90,34 @@ def mktable6v6():
 
             threading.Thread(
                 target=log,
-                args=("MAKE_TABLE", f"{filename}", ip),
+                args=("MAKE_TABLE", f"{table_id}", ip),
                 daemon=True
             ).start()
-            return redirect("/table/" + filename)
-    except:
+            return redirect("/table/" + table_id)
+    except Exception as e:
+        raise e
         return render_template("404.html"), 404
 
     return render_template("mktablemaker-6v6.html", COUNTRY_NAMES=COUNTRY_NAMES, filename=None)
 
 @tables_bp.route("/table/<image>")
 def table(image):
-    if os.path.exists("static/images/tables/"+image):
-        return send_file("static/images/tables/"+image)
-    else:
-        return render_template("404_url_shortener.html")
+
+    try:
+
+        image_bytes = get_image_bytes(image)
+
+
+    except:
+        return render_template("403.html")
+
+    if not image_bytes:
+        return render_template("404.html")
+
+    return send_file(
+        BytesIO(image_bytes),   # ← convert bytes → file-like object
+        mimetype="image/png"    # ← IMPORTANT: match your stored format
+    )
     
     
 

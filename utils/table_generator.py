@@ -4,6 +4,9 @@ from io import BytesIO
 from PIL import Image, ImageDraw, ImageFont
 from datetime import datetime
 from functools import lru_cache
+from io import BytesIO
+
+from db_queries.tables import get_image_bytes
 
 # ============================
 # THEME
@@ -187,7 +190,7 @@ def draw_medal(base, x, y, color, size=50):
 # MAIN GENERATOR
 # ============================
 
-def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title,
+def generate_war_image(data, BACKGROUND_IMAGE_URL, title,
                        sub_text=datetime.now().strftime("%b %d, %Y"),
                        ACCENTS=(145, 70, 255)):
 
@@ -381,9 +384,12 @@ def generate_war_image(data, output, BACKGROUND_IMAGE_URL, title,
         )
 
     final = final.convert("RGB")
-    final.save(output)
 
-    print("Saved to", output)
+    buffer = BytesIO()
+    final.save(buffer, format="PNG")  # or PNG if you prefer
+    image_bytes = buffer.getvalue()
+
+    return image_bytes
 
 # ============================
 # TEST
@@ -397,7 +403,7 @@ if __name__ == "__main__":
                 "name": "feh yo man",
                 "icon": "https://media.discordapp.net/attachments/1231262211813539890/1281382817955053578/8K2ghC5Zz5odshlUDSTxzK8gtQx4P47p91nYtyJP_1.png?ex=69d0e9fe&is=69cf987e&hm=373e49d4561b6426313360a464ecb72ff4f65e30d25988608fdc7bc2e1f233c1&=&format=webp&quality=lossless",
                 "members": [
-                    {"name": "NatTheNatFromWalesYippy12", "country": "gb-wls", "score": 154},
+                    {"name": "GlobFaceNatHead", "country": "gb-wls", "score": 154},
                     {"name": "Alex", "country": "gb-eng", "score": 140},
                     {"name": "Liam", "country": "gb-sct", "score": 130},
                     {"name": "Mia", "country": "gb-nir", "score": 120},
@@ -420,5 +426,10 @@ if __name__ == "__main__":
         ]
     }
 
-    generate_war_image(sample_data, "test.png", "https://catwithmonocle.com/wp-content/uploads/2023/04/smb-movie-mario-kart-3840x2160-1.jpg", "TM vs Influx | #21234 Semi-Finals", ACCENTS=(0, 255, 255))
+    my_table = generate_war_image(sample_data, "https://catwithmonocle.com/wp-content/uploads/2023/04/smb-movie-mario-kart-3840x2160-1.jpg", "TM vs Influx | #21234 Semi-Finals", ACCENTS=(0, 255, 255))
 
+    from db_queries.tables import save_image
+
+    table_id = save_image(my_table)
+
+    print(table_id)

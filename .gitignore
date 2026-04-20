@@ -7,6 +7,6 @@ urls.json
 static/images/tables/*
 test.png
 stats.json
-utils/sqldb_connection.py
+sqldb_connection.py
 static_data.json
 flag_cache/

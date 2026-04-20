@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect
 
 from utils.generator_urls import generate_string
-from utils.logger import log
+from db_queries.logger import log
 
 import threading, requests, json, os
 

@@ -4,11 +4,11 @@ from datetime import datetime
 # Allowed log types
 ALLOWED_LOG_TYPES = {"INFO", "WARNING", "ERROR", "DEBUG","ACCESS","TEST", "MAKE_TABLE", "URL_SHORT"}
 
-from utils.sqldb_connection import SERVER, DATABASE, USERNAME, PASSWORD
+from sqldb_connection import SERVER, DATABASE, USERNAME, PASSWORD
 
 # ---- CONNECTION STRING ----
 conn_str = (
-    "DRIVER={ODBC Driver 18 for SQL Server};"
+    "DRIVER={ODBC Driver 17 for SQL Server};"
     #"DRIVER={SQL Server};"
     f"SERVER={SERVER};"
     f"DATABASE={DATABASE};"
