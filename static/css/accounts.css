@@ -1,0 +1,80 @@
+
+
+
+.register-form {
+    background: rgba(20, 20, 30, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    border: 1px solid rgba(140, 80, 255, 0.6);
+    border-radius: 16px;
+
+    padding: 50px;
+    text-align: center;
+
+    width: 320px;
+}
+
+.register-form h1 {
+    color: #a855f7;
+    font-size: 2.2rem;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+
+.register-form input {
+    width: 80%;
+    padding: 10px;
+    margin: 8px 0;
+
+    border-radius: 8px;
+    border: 1px solid rgba(140, 80, 255, 0.5);
+
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+
+    outline: none;
+    transition: all 0.25s ease;
+}
+
+.register-form input:focus {
+    border-color: #a855f7;
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.6);
+}
+
+.register-form input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.register-form button {
+    width: 100%;
+    padding: 10px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: linear-gradient(135deg, #9333ea, #6d28d9);
+    color: white;
+    font-weight: bold;
+
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.register-form button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px rgba(147, 51, 234, 0.7);
+}
+
+.register-form p {
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    color: rgb(238, 101, 101);
+}
+
+.register-form h3 {
+    color: gray;
+    font-weight: normal;
+    font-size: 15px;
+}

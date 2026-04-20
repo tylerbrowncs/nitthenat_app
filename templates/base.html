@@ -1,98 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta name="description" content="Official website of NitTheNat. Streamer | Karter | Disabled">
+  <head>
+    <meta name="description" content="Official website of NitTheNat. Streamer | Karter | Disabled" />
     <meta name="google-site-verification" content="zFYst-_BsVsxPJYQsnnoRKvGtwiwqA4PadyPW_yHdKM" />
 
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/profile.png') }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/profile.png') }}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/profile.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/profile.png') }}" />
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/profile.png') }}" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/profile.png') }}" />
 
-    <meta property="og:title" content="NitTheNat">
-    <meta property="og:description" content="NitTheNat | Streamer | Karter | Disabled">
-    <meta property="og:image" content="https://nitthenat.com/image/profile">
-    <meta property="og:url" content="https://bitthenat.com">
-    <meta property="og:type" content="website">
+    <meta property="og:title" content="NitTheNat" />
+    <meta property="og:description" content="NitTheNat | Streamer | Karter | Disabled" />
+    <meta property="og:image" content="https://nitthenat.com/image/profile" />
+    <meta property="og:url" content="https://bitthenat.com" />
+    <meta property="og:type" content="website" />
 
-    <meta property="og:site_name" content="NitTheNat.com">
-    <meta name="theme-color" content="#9146FF">
+    <meta property="og:site_name" content="NitTheNat.com" />
+    <meta name="theme-color" content="#9146FF" />
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>{% block title %}NitTheNat{% endblock %}</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>
+      {% block title %}
+        NitTheNat
+      {% endblock %}
+    </title>
 
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-    {% block head %}{% endblock %}
-</head>
-<body>
-
-<button class="menu-btn" onclick="toggleSidebar()">
-    <i class="fas fa-bars"></i>
-</button>
-
-<div id="overlay" onclick="toggleSidebar()"></div>
-
-<div id="mySidebar" class="sidebar">
-    <div class="sidebar-header">
-        <button class="close-menu" onclick="toggleSidebar()">
-            <i class="fas fa-times"></i>
-        </button>
+    {% block head %}
+    {% endblock %}
+  </head>
+  <body>
+    <div class="top-bar">
+      <div class="top-right">
+        {% if session['user_id'] %}
+          <div class="user-info">
+            <i class="fas fa-user-circle"></i>
+            <span>{{ session['username'] }}</span>
+          </div>
+        {% else %}
+          <a href="{{ url_for('accounts_mgmt.login') }}" class="login-btn"><i class="fas fa-sign-in-alt"></i> Login</a>
+        {% endif %}
+      </div>
     </div>
 
-    <div class="nav-content">
-        <a href="{{ url_for('home') }}">
-            <i class="fas fa-home"></i> Home
-        </a>
+    <button class="menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+
+    <div id="overlay" onclick="toggleSidebar()"></div>
+
+    <div id="mySidebar" class="sidebar">
+      <div class="sidebar-header">
+        <button class="close-menu" onclick="toggleSidebar()"><i class="fas fa-times"></i></button>
+      </div>
+
+      <div class="nav-content">
+        <a href="{{ url_for('home') }}"><i class="fas fa-home"></i> Home</a>
 
         <button class="dropdown-btn">
-            <i class="fas fa-newspaper"></i> Whats new?
-            <i class="fa fa-caret-down"></i>
+          <i class="fas fa-newspaper"></i> Whats new?
+          <i class="fa fa-caret-down"></i>
         </button>
 
         <div class="dropdown-container">
-            <a href="{{ url_for('posts.mkw100') }}">100% Speedrun</a>
+          <a href="{{ url_for('posts.mkw100') }}">100% Speedrun</a>
         </div>
 
-        <a href="{{ url_for('pages.tourneys') }}">
-            <i class="fa fa-users"></i> Tournaments
-        </a>
-
+        <a href="{{ url_for('pages.tourneys') }}"><i class="fa fa-users"></i> Tournaments</a>
 
         <button class="dropdown-btn">
-            <i class="fas fa-screwdriver-wrench"></i> Tools
-            <i class="fa fa-caret-down"></i>
+          <i class="fas fa-screwdriver-wrench"></i> Tools
+          <i class="fa fa-caret-down"></i>
         </button>
 
         <div class="dropdown-container">
-            <a href="{{ url_for('shortener.shorten') }}">URL Shortener</a>
-            <a href="{{ url_for('tables.mktable6v6') }}">6v6 Table Generator</a>
+          <a href="{{ url_for('shortener.shorten') }}">URL Shortener</a>
+          <a href="{{ url_for('tables.mktable6v6') }}">6v6 Table Generator</a>
         </div>
 
-        <a href="https://twitch.tv/nitthenat">
-            <i class="fab fa-twitch"></i> Twitch
-        </a>
-
+        <a href="https://twitch.tv/nitthenat"><i class="fab fa-twitch"></i> Twitch</a>
+      </div>
+      <div class="sidebar-watermark">Developed by TMoney19</div>
     </div>
-    <div class="sidebar-watermark">
-        Developed by TMoney19
+
+    <div class="page-wrapper">
+      {% block content %}
+      {% endblock %}
     </div>
-</div>
 
-
-<div class="page-wrapper">
-    {% block content %}{% endblock %}
-</div>
-
-<script src="{{ url_for('static', filename='js/main.js') }}"></script>
-
-</body>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  </body>
 </html>

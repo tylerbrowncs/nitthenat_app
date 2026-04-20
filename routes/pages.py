@@ -8,20 +8,6 @@ from db_queries.tables import get_image_bytes
 
 pages_bp = Blueprint("pages", __name__)
 
-@pages_bp.route("/tyler")
-def tyler():
-    
-    #FMw4FMjWsu
-
-    image_bytes = get_image_bytes("FMw4FMjWsu")
-
-    if not image_bytes:
-        return "Not found", 404
-
-    return send_file(
-        BytesIO(image_bytes),   # ← convert bytes → file-like object
-        mimetype="image/png"    # ← IMPORTANT: match your stored format
-    )
 
 @pages_bp.route("/tournements")
 def tourneys():

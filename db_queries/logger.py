@@ -1,49 +1,32 @@
-import pyodbc, pytz
+import pytz
 from datetime import datetime
 
+from db_queries.db import get_db, get_cursor  
+
 # Allowed log types
-ALLOWED_LOG_TYPES = {"INFO", "WARNING", "ERROR", "DEBUG","ACCESS","TEST", "MAKE_TABLE", "URL_SHORT"}
-
-from sqldb_connection import SERVER, DATABASE, USERNAME, PASSWORD, DRIVER
-
-# ---- CONNECTION STRING ----
-conn_str = (
-    f"DRIVER={DRIVER};"
-    #"DRIVER={SQL Server};"
-    f"SERVER={SERVER};"
-    f"DATABASE={DATABASE};"
-    f"UID={USERNAME};"
-    f"PWD={PASSWORD};"
-    "TrustServerCertificate=yes;"
-)
+ALLOWED_LOG_TYPES = {"INFO", "WARNING", "ERROR", "DEBUG", "ACCESS", "TEST", "MAKE_TABLE", "URL_SHORT", "LOGIN", "REGISTER"}
 
 dev_skip_logging = False
+
 
 def log(log_type: str, message: str, user: str):
     """
     Inserts a log into the database after validating the log type.
-    
-    :param log_type: Type of log (must be in ALLOWED_LOG_TYPES)
-    :param log_datetime: datetime object
-    :param message: log message (string)
     """
-    lon = pytz.timezone('Europe/London')
-    log_datetime = datetime.now(lon)
 
     if dev_skip_logging:
         return
-
-    # Validate log type
+    
     if log_type not in ALLOWED_LOG_TYPES:
         raise ValueError(f"Invalid log type: {log_type}. Must be one of {ALLOWED_LOG_TYPES}")
 
+    lon = pytz.timezone('Europe/London')
+    log_datetime = datetime.now(lon)
+
     try:
-        # Connect to database
-        conn = pyodbc.connect(conn_str)
-        cursor = conn.cursor()
+        conn = get_db()     
+        cursor = get_cursor() 
 
-
-        # Insert log
         cursor.execute(
             """
             INSERT INTO nitthenat_logs (datetime, type, message, user_ip)
@@ -58,6 +41,9 @@ def log(log_type: str, message: str, user: str):
         print(f"Failed to insert log: {e}")
 
     finally:
-        cursor.close()
-        conn.close()
+        try:
+            cursor.close()
+        except:
+            pass
+
         print("LOGGED")

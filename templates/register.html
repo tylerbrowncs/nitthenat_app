@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}NitTheNat | Register{% endblock %}
+
+{% block head %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/accounts.css') }}">
+
+
+{% endblock %}
+
+{% block content %}
+
+<div class="panel">
+
+    <div class="register-form">
+        <h1>Register</h1>
+        
+
+        {% if error %}
+            <p>{{ error }}</p>
+        {% endif %}
+
+        <form method="POST">
+            <input type="text" name="username" placeholder="Username" required><br><br>
+            <input type="password" name="password" placeholder="Password" required><br><br>
+            <input type="password" name="conf-password" placeholder="Confirm Password" required><br><br>
+            <button type="submit">Register</button>
+        </form>
+
+
+    </div>
+
+</div>
+
+{% endblock %}

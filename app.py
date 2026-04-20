@@ -1,4 +1,4 @@
-from flask import Flask, current_app,redirect, request, render_template_string, render_template, send_file
+from flask import Flask, current_app,redirect, request, render_template_string, render_template, send_file, copy_current_request_context
 from utils.coloring import hex_to_rgb
 from utils.generator_urls import generate_string
 from utils.table_generator import generate_war_image
@@ -6,10 +6,25 @@ from utils.countires import COUNTRY_CODES, COUNTRY_NAMES
 from utils.liveChecker import isLive
 from db_queries.logger import log
 from datetime import datetime
+from config import SECRET
+from utils.limiter import limiter
+
+
 import json, os, threading
+
+
+
 
 app = Flask(__name__)
 
+limiter.init_app(app)
+
+app.config.update(
+    SECRET_KEY="SECRET",
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SECURE=True,   # only if HTTPS
+    SESSION_COOKIE_SAMESITE='Lax'
+)
 #######################################
 #
 #              Blueprints
@@ -30,6 +45,9 @@ app.register_blueprint(shortener_bp)
 
 from routes.tables import tables_bp
 app.register_blueprint(tables_bp)
+
+from routes.account_management import accountsmgmt_bp
+app.register_blueprint(accountsmgmt_bp)
 
 #######################################
 #
@@ -68,15 +86,14 @@ def isValidRoute(route):
 @app.after_request
 def track_page_views(response):
 
-    if request.path.startswith(("/r","/image", "/static", "/favicon.ico", "/table")):
+    if request.path.startswith(("/r", "/image", "/static", "/favicon.ico", "/table")):
         return response
-    
+
     if not isValidRoute(request.path):
         return response
-    
+
     path = request.path
 
-  
     try:
         ip = request.headers.get("X-Forwarded-For", request.remote_addr)
         if ip:
@@ -84,12 +101,15 @@ def track_page_views(response):
     except:
         ip = request.remote_addr
 
+
+    @copy_current_request_context
+    def log_async():
+        log("ACCESS", path, ip)
+
     threading.Thread(
-        target=log,
-        args=("ACCESS", f"{path}", ip),
+        target=log_async,
         daemon=True
     ).start()
-
 
     return response
 

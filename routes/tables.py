@@ -1,12 +1,12 @@
 from io import BytesIO
 
-from flask import Blueprint, request, current_app, render_template, redirect, send_file
+from flask import Blueprint, request, current_app, render_template, redirect, send_file, session
 
 from datetime import datetime
 import threading, os
 
 from db_queries.logger import log
-from db_queries.tables import get_image_bytes, save_image
+from db_queries.tables import get_image_bytes, get_tables_by_user, save_image
 from utils.countires import COUNTRY_CODES, COUNTRY_NAMES
 from utils.coloring import hex_to_rgb
 from utils.generator_urls import generate_string
@@ -70,9 +70,14 @@ def mktable6v6():
 
             new_table = generate_war_image(data, bg_url, title, subtitle, color)
 
+            if "user_id" in session:
+                user = session["user_id"]
+            else:
+                user = None
+
             try:
 
-                table_id = save_image(new_table)
+                table_id = save_image(new_table, user, title)
 
             except:
                 return render_template("403.html")
@@ -88,6 +93,8 @@ def mktable6v6():
             except:
                 ip = request.remote_addr
 
+
+
             threading.Thread(
                 target=log,
                 args=("MAKE_TABLE", f"{table_id}", ip),
@@ -95,7 +102,6 @@ def mktable6v6():
             ).start()
             return redirect("/table/" + table_id)
     except Exception as e:
-        raise e
         return render_template("404.html"), 404
 
     return render_template("mktablemaker-6v6.html", COUNTRY_NAMES=COUNTRY_NAMES, filename=None)
@@ -117,7 +123,35 @@ def table(image):
     return send_file(
         BytesIO(image_bytes),   # ← convert bytes → file-like object
         mimetype="image/png"    # ← IMPORTANT: match your stored format
+
     )
+
+
+@tables_bp.route("/tables")
+def tables():
+    if "user_id" not in session:
+        return redirect("tables.mktable6v6")
     
+
+    user_tables = get_tables_by_user(session["user_id"])
+    tables = [
+        {"table_name": "Nat vs12314 Tyler",
+         "table_id": "hjdsf04",
+        "date_created": "10/10/10 10:10"},
+        {"table_name": "Nat vs453 Tyler",
+         "table_id": "hjdsf04",
+        "date_created": "10/10/10 10:10"},
+        {"table_name": "Nat vs123123 Tyler",
+         "table_id": "hjdsf04",
+        "date_created": "10/10/10 10:10"},
+        {"table_name": "Nat vs123Tyler",
+         "table_id": "hjdsf04",
+        "date_created": "10/10/10 10:10"},
+        {"table_name": "Nat vs 123Tyler",
+         "table_id": "hjdsf04",
+        "date_created": "10/10/10 10:10"},
+
+    ]
+    return render_template("my_tables.html", tables=user_tables)
     
 

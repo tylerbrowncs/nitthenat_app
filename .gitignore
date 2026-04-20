@@ -10,3 +10,4 @@ stats.json
 sqldb_connection.py
 static_data.json
 flag_cache/
+config.py

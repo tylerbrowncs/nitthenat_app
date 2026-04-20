@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  NitTheNat | 6v6 Table
+{% endblock %}
+
+{% block head %}
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/my_tables.css') }}" />
+{% endblock %}
+
+{% block content %}
+  <div class="tables-page">
+    <main class="content-panel">
+        <h1> My Tables </h1>
+        <div class="table-list">
+    {% for table in tables %}
+        <div class="table-item">
+            <div class="table-info">
+                <div class="table-name">{{ table.table_name }}</div>
+                <div class="table-date">Created on: {{ table.date_created }}</div>
+            </div>
+
+            <div class="table-action">
+                <a href="../table/{{ table.table_id }}" class="table-btn">
+                    Open Table
+                </a>
+            </div>
+        </div>
+    {% endfor %}
+
+    <p> {{ user_tables }}
+</div>
+    </main>
+  </div>
+{% endblock %}

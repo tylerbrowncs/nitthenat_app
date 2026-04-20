@@ -15,20 +15,21 @@ conn_str = (
     "TrustServerCertificate=yes;"
 )
 
-def save_image(img_bytes, user=None):
+def save_image(img_bytes, user=None, table_title=None):
 
 
     conn = pyodbc.connect(conn_str)
     cursor = conn.cursor()
 
     query = """
-    INSERT INTO nitthenat_tables (table_image, created_by, created_on)
+    INSERT INTO nitthenat_tables (table_image, created_by, created_on, table_title)
     OUTPUT INSERTED.table_id
-    VALUES (?, ?, ?)
+    VALUES (?, ?, ?, ?)
     """
-    created_on = datetime.now()
+    lon = pytz.timezone('Europe/London')
+    created_on = datetime.now(lon)
 
-    cursor.execute(query, (img_bytes, user, created_on))
+    cursor.execute(query, (img_bytes, user, created_on, table_title))
 
     inserted_id = cursor.fetchone()[0]
 
@@ -48,7 +49,7 @@ def get_image_bytes(table_id):
     WHERE table_id = ?
     """
 
-    cursor.execute(query, (table_id,))  # ← FIXED
+    cursor.execute(query, (table_id,))
     row = cursor.fetchone()
 
     cursor.close()
@@ -58,3 +59,27 @@ def get_image_bytes(table_id):
         return None
 
     return row[0]
+
+
+def get_tables_by_user(user_id):
+    conn = pyodbc.connect(conn_str)
+    cursor = conn.cursor()
+
+    query = """
+    SELECT table_id, created_on, table_title
+    FROM dbo.nitthenat_tables
+    WHERE created_by = ?
+    """
+
+    cursor.execute(query, (user_id,))
+    rows = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return [
+        {"table_name": row.table_title,
+         "table_id": row.table_id,
+         "date_created": row.created_on}
+         for row in rows
+    ]
