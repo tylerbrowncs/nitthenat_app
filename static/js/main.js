@@ -28,3 +28,16 @@ for (var i = 0; i < dropdowns.length; i++) {
         }
     });
 }
+
+const userInfo = document.querySelector(".user-info");
+  const dropdown = document.querySelector(".dropdown");
+
+  userInfo.addEventListener("click", () => {
+    dropdown.classList.toggle("show");
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!userInfo.contains(e.target) && !dropdown.contains(e.target)) {
+      dropdown.classList.remove("show");
+    }
+  });

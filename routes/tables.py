@@ -122,8 +122,8 @@ def table(image):
         return render_template("404.html")
 
     return send_file(
-        BytesIO(image_bytes),   # ← convert bytes → file-like object
-        mimetype="image/png"    # ← IMPORTANT: match your stored format
+        BytesIO(image_bytes), 
+        mimetype="image/png"  
 
     )
 
@@ -135,24 +135,7 @@ def tables():
     
 
     user_tables = get_tables_by_user(session["user_id"])
-    tables = [
-        {"table_name": "Nat vs12314 Tyler",
-         "table_id": "hjdsf04",
-        "date_created": "10/10/10 10:10"},
-        {"table_name": "Nat vs453 Tyler",
-         "table_id": "hjdsf04",
-        "date_created": "10/10/10 10:10"},
-        {"table_name": "Nat vs123123 Tyler",
-         "table_id": "hjdsf04",
-        "date_created": "10/10/10 10:10"},
-        {"table_name": "Nat vs123Tyler",
-         "table_id": "hjdsf04",
-        "date_created": "10/10/10 10:10"},
-        {"table_name": "Nat vs 123Tyler",
-         "table_id": "hjdsf04",
-        "date_created": "10/10/10 10:10"},
 
-    ]
     return render_template("my_tables.html", tables=user_tables)
     
 

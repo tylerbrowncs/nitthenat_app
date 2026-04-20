@@ -41,9 +41,16 @@
     <div class="top-bar">
       <div class="top-right">
         {% if session['user_id'] %}
-          <div class="user-info">
-            <i class="fas fa-user-circle"></i>
-            <span>{{ session['username'] }}</span>
+          <div class="user-menu">
+            <div class="user-info">
+  <img class="avatar" src="https://static.vecteezy.com/system/resources/thumbnails/001/840/618/small/picture-profile-icon-male-icon-human-or-people-sign-and-symbol-free-vector.jpg" alt="Profile">
+  <span>{{ session['username'] }}</span>
+</div>
+            <div class="dropdown">
+                <a href="{{ url_for('tables.tables') }}">My Tables</a>
+                <a href="{{ url_for('accounts_mgmt.logout') }}">Logout</a>
+            </div>
+
           </div>
         {% else %}
           <a href="{{ url_for('accounts_mgmt.login') }}" class="login-btn"><i class="fas fa-sign-in-alt"></i> Login</a>
