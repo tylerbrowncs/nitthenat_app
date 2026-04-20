@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect
+from flask import Blueprint, render_template, request, redirect, copy_current_request_context
 
 from utils.generator_urls import generate_string
 from db_queries.logger import log
@@ -50,9 +50,13 @@ def shorten():
             except:
                 ip = request.remote_addr
 
+
+            @copy_current_request_context
+            def log_async():
+                log("URL_SHORT", f"{original_url} > {short_url}", ip)
+
             threading.Thread(
-                target=log,
-                args=("URL_SHORT", f"{original_url} > {short_url}", ip),
+                target=log_async,
                 daemon=True
             ).start()
 

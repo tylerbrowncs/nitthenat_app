@@ -1,6 +1,6 @@
 from io import BytesIO
 
-from flask import Blueprint, request, current_app, render_template, redirect, send_file, session
+from flask import Blueprint, request, current_app, render_template, redirect, send_file, session, copy_current_request_context
 
 from datetime import datetime
 import threading, os
@@ -93,11 +93,12 @@ def mktable6v6():
             except:
                 ip = request.remote_addr
 
-
+            @copy_current_request_context
+            def log_async():
+                log("MAKE_TABLE", f"{table_id}", ip)
 
             threading.Thread(
-                target=log,
-                args=("MAKE_TABLE", f"{table_id}", ip),
+                target=log_async,
                 daemon=True
             ).start()
             return redirect("/table/" + table_id)

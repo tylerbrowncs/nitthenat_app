@@ -38,7 +38,8 @@ def log(log_type: str, message: str, user: str):
         conn.commit()
 
     except Exception as e:
-        print(f"Failed to insert log: {e}")
+        print(f"Failed to insert log: {e}", flush=True)
+        print("LOGGED", flush=True)
 
     finally:
         try:

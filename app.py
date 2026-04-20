@@ -86,9 +86,9 @@ def isValidRoute(route):
 @app.after_request
 def track_page_views(response):
 
-    if request.path.startswith(("/r", "/image", "/static", "/favicon.ico", "/table")):
+    if request.path.startswith(("/r", "/image", "/static", "/favicon.ico")) \
+    or request.path == "/table":
         return response
-
     if not isValidRoute(request.path):
         return response
 
