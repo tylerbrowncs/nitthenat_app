@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  NitTheNat | My Profile
+{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="panel">
+  <div class="profile-card">
+    <h2 class="profile-title">Profile</h2>
+
+
+    <div class="profile-content">
+
+      <!-- LEFT SIDE -->
+      <div class="profile-left">
+        <img src="{{ url_for('accounts_mgmt.profile_image', username=session.username) }}" class="profile-img">
+
+        <form method="POST" enctype="multipart/form-data" class="form-section">
+             <input type="hidden" name="form_type" value="profile_pic">
+          <label class="file-upload">
+            <input type="file" name="profile_pic" onchange="previewImage(event)" accept="image/png, image/jpeg">
+            <span>Select Image</span>
+          </label><br><br>
+          <button class="btn" type="submit">Change</button>
+        </form>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="profile-right">
+
+        <form method="POST" class="display-name-section">
+             <input type="hidden" name="form_type" value="display_name">
+
+          <input type="text" name="display_name" value="{{ session.display_name }}">
+          <button class="btn small" type="submit">Change Display Name</button>
+        </form>
+        <p> Note: Your username will not change! </p>
+
+        <hr>
+
+        <form method="POST" class="password-section">
+             <input type="hidden" name="form_type" value="password">
+          <input type="password" name="current_password" placeholder="Current Password">
+          <input type="password" name="new_password" placeholder="New Password">
+          <input type="password" name="confirm_password" placeholder="Confirm New Password">
+          <button class="btn" type="submit">Confirm</button>
+        </form>
+
+      </div>
+
+
+    </div>
+    <br>
+    {% if info %}
+      <p style="color: #c084fc; padding-top: 10px"> {{ info }} </p>
+    {% endif %}
+
+    {% if error %}
+      <p style="color: red; padding-top: 10px"> {{ error }} </p>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+function previewImage(event) {
+    const img = document.querySelector('.profile-img');
+    img.src = URL.createObjectURL(event.target.files[0]);
+}
+</script>
+{% endblock %}
