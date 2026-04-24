@@ -23,8 +23,10 @@ app.config.update(
     SECRET_KEY="SECRET",
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SECURE=True,   # only if HTTPS
-    SESSION_COOKIE_SAMESITE='Lax'
+    SESSION_COOKIE_SAMESITE='Lax',
+    MAX_CONTENT_LENGTH = 5*1024*1024 #5MB
 )
+
 #######################################
 #
 #              Blueprints

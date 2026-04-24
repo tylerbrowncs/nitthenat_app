@@ -43,9 +43,26 @@
       <div class="top-right">
         {% if session.user_id %}
           <div class="user-menu">
-            <div class="user-info">
-              <img class="avatar" src="{{ url_for('accounts_mgmt.profile_image', username=session.username) }}" alt="Profile" />
-              <span>{{ session.display_name }}</span>
+            <div class="user-menu">
+              <div class="user-info">
+                <img class="avatar" src="{{ url_for('accounts_mgmt.profile_image', username=session.username) }}" alt="Profile" />
+
+                <div class="user-text">
+                  <span class="username">{{ session.display_name }}</span>
+
+                  <div class="badges">
+                    {% if session.username == 'tmoney19' %}
+                      <span class="nat-badge">NAT</span>
+                    {% endif %}
+                    {% if session.username == 'tmoney19' %}
+                      <span class="dev-badge">DEVELOPER</span>
+                    {% endif %}
+                    {% if session.role == 'admin' %}
+                      <span class="admin-badge">ADMIN</span>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
             </div>
             <div class="dropdown">
               <a href="{{ url_for('accounts_mgmt.profile') }}">Profile</a>

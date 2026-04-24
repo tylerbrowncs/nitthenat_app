@@ -5,7 +5,7 @@ from PIL import Image
 from flask import (
     Blueprint, copy_current_request_context,
     render_template, request, session,
-    redirect, url_for, Response
+    redirect, url_for, Response, g
 )
 
 from db_queries.accounts import (
@@ -47,6 +47,7 @@ def login():
                 session['user_id'] = user['id']
                 session['username'] = user['username']
                 session['display_name'] = user["display_name"]
+                session['role'] = user["role"]
 
                 ip = request.headers.get("X-Forwarded-For", request.remote_addr)
                 if ip:
@@ -69,7 +70,7 @@ def login():
 @accountsmgmt_bp.route("/register", methods=["GET", "POST"])
 def register():
     if 'user_id' in session:
-        return redirect(url_for('home'))
+        return redirect(url_for('home')) 
 
     if request.method == "GET":
         return render_template("register.html")
@@ -205,3 +206,23 @@ def profile_image(username):
         return redirect(url_for('static', filename='images/default_pfp.png'))
 
     return Response(user["profile_pic_bin"], mimetype='image/png')
+
+
+# Admin Revalidation
+@accountsmgmt_bp.before_request
+def load_user():
+    if 'user_id' not in session:
+        g.user = None
+        return
+
+    if session.get('role') == 'admin':
+        user = get_user_by_username(session['username'])
+
+        session['role'] = user['role']
+
+        g.user = user
+    else:
+        g.user = {
+            "id": session['user_id'],
+            "role": session.get('role')
+        }
