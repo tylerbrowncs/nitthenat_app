@@ -95,6 +95,16 @@ function applyPreset(preset) {
     setValue("[name='team1_icon']", "https://nitthenat.com/image/cblogo");
 
   }
+
+  if (preset === "VSP") {
+    setValue("[name='title_text']", "Vespertine vs ___");
+    setValue("[name='background_url']", "https://nitthenat.com/image/vsptablebackground");
+    setValue("[name='favcolor']", "#FFFFFF");
+
+    setValue("[name='team1_name']", "Vespertine (νsρ)");
+    setValue("[name='team1_icon']", "https://nitthenat.com/image/vsplogo");
+
+  }
 }
 
 document.addEventListener("DOMContentLoaded", function () {

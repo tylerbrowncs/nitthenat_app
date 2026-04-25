@@ -34,3 +34,11 @@ def cblogo():
 @images_bp.route("/image/cbtablebackground")
 def cbbkgrtable():
     return send_file("static/images/CBTableBackground.png")
+
+@images_bp.route("/image/vsplogo")
+def vsplogo():
+    return send_file("static/images/VSPLogo.png")
+
+@images_bp.route("/image/vsptablebackground")
+def vspbkgrtable():
+    return send_file("static/images/VSPTableBackground.png")
