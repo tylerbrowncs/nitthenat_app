@@ -69,6 +69,7 @@ def get_tables_by_user(user_id):
     SELECT table_id, created_on, table_title
     FROM dbo.nitthenat_tables
     WHERE created_by = ?
+    ORDER BY created_on DESC
     """
 
     cursor.execute(query, (user_id,))

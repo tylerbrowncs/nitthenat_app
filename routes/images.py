@@ -7,7 +7,14 @@ images_bp = Blueprint("images", __name__)
 def imgoff():
     return send_file("static/images/offline.png")
 
-
 @images_bp.route("/image/profile")
 def imgprof():
     return send_file("static/images/profile.png")
+
+@images_bp.route("/image/tmlogo")
+def tmlogo():
+    return send_file("static/images/TMLogo.png")
+
+@images_bp.route("/image/tmtablebackground")
+def tmbkgrtable():
+    return send_file("static/images/TMTableBackground.png")

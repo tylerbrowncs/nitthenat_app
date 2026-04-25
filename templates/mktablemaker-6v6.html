@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block head %}
+<script src="{{ url_for('static', filename='js/table_maker_presets.js') }}"></script>
   <script>
     $(document).ready(function () {
       $('.searchable').select2({
@@ -65,6 +66,14 @@
         btn.style.cursor = ''
       })
     })
+
+    $('.searchable').select2({
+      placeholder: 'Select a country',
+      allowClear: false,
+      width: '200px'
+    })
+
+    
   </script>
 
   <link rel="stylesheet" href="{{ url_for('static', filename='css/generator6v6.css') }}" />
@@ -74,12 +83,25 @@
   <div class="mkw-page">
     <header class="hero-banner">
       <h1>Table Generator</h1>
+      
     </header>
 
     <main class="content-panel">
       <a href="{{ url_for('home') }}" class="back-link">← Home</a>
 
       <h2>6v6 War Table Generator</h2>
+
+<div class="input-group">
+  <label for="preset">Preset</label>
+  <select id="preset">
+    <option value="none">None</option>
+    <option value="TM">TM</option>
+    {% if session['role'] == "admin" %}
+    <option value="Development">Development</option>
+    {% endif %}
+  </select>
+</div>
+
 
       {% if filename %}
         <img class="result" src="https://nitthenat.com/table/{{ filename }}" />
@@ -144,11 +166,4 @@
     </main>
   </div>
 
-  <script>
-    $('.searchable').select2({
-      placeholder: 'Select a country',
-      allowClear: false,
-      width: '200px'
-    })
-  </script>
 {% endblock %}
