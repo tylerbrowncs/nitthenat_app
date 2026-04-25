@@ -18,3 +18,19 @@ def tmlogo():
 @images_bp.route("/image/tmtablebackground")
 def tmbkgrtable():
     return send_file("static/images/TMTableBackground.png")
+
+@images_bp.route("/image/arclogo")
+def arclogo():
+    return send_file("static/images/ARCLogo.png")
+
+@images_bp.route("/image/arctablebackground")
+def arcbkgrtable():
+    return send_file("static/images/ARCTableBackground.png")
+
+@images_bp.route("/image/cblogo")
+def cblogo():
+    return send_file("static/images/CBLogo.png")
+
+@images_bp.route("/image/cbtablebackground")
+def cbbkgrtable():
+    return send_file("static/images/CBTableBackground.png")

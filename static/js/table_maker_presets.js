@@ -24,7 +24,6 @@ function resetSelect(select) {
 
 
 function applyPreset(preset) {
-  if (preset === "none") {
     document.querySelectorAll("input").forEach(input => {
       if (input.type === "color") {
         input.value = "#9146ff";
@@ -39,8 +38,6 @@ function applyPreset(preset) {
       resetSelect(select);
     });
 
-    return;
-  }
 
   if (preset === "Development") {
     setValue("[name='title_text']", "DEV WAR");
@@ -76,6 +73,26 @@ function applyPreset(preset) {
 
     setValue("[name='team1_name']", "Trivial Matters (™)");
     setValue("[name='team1_icon']", "https://nitthenat.com/image/tmlogo");
+
+  }
+
+  if (preset === "ARC") {
+    setValue("[name='title_text']", "Arcadia Terra vs ___");
+    setValue("[name='background_url']", "https://nitthenat.com/image/arctablebackground");
+    setValue("[name='favcolor']", "#FFD700");
+
+    setValue("[name='team1_name']", "Arcadia Terra (ARC)");
+    setValue("[name='team1_icon']", "https://nitthenat.com/image/arclogo");
+
+  }
+
+  if (preset === "CB") {
+    setValue("[name='title_text']", "Caledonbria vs ___");
+    setValue("[name='background_url']", "https://nitthenat.com/image/cbtablebackground");
+    setValue("[name='favcolor']", "#33E8CD");
+
+    setValue("[name='team1_name']", "Caledonbria (CB)");
+    setValue("[name='team1_icon']", "https://nitthenat.com/image/cblogo");
 
   }
 }
