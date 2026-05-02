@@ -23,7 +23,7 @@
         <form method="POST" enctype="multipart/form-data" class="form-section">
              <input type="hidden" name="form_type" value="profile_pic">
           <label class="file-upload">
-            <input type="file" name="profile_pic" onchange="previewImage(event)" accept="image/png, image/jpeg">
+            <input type="file" name="profile_pic" onchange="previewImage(event)" accept="image/png, image/jpeg, image/jpg">
             <span>Select Image</span>
           </label><br><br>
           <button class="btn" type="submit">Change</button>
@@ -70,8 +70,23 @@
 
 <script>
 function previewImage(event) {
-    const img = document.querySelector('.profile-img');
-    img.src = URL.createObjectURL(event.target.files[0]);
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const img = new Image();
+  const objectUrl = URL.createObjectURL(file);
+
+  img.onload = function () {
+    if (img.width > 1000 || img.height > 1000) {
+      alert("Image must be 1000x1000 pixels or smaller.");
+      event.target.value = "";
+    } else {
+      document.querySelector('.profile-img').src = objectUrl;
+    }
+    URL.revokeObjectURL(objectUrl);
+  };
+
+  img.src = objectUrl;
 }
 </script>
 {% endblock %}
