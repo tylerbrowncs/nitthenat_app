@@ -79,6 +79,9 @@ def register():
     password = request.form.get('password') or ""
     conf_password = request.form.get('conf-password') or ""
 
+    if len(username) > 20:
+        return render_template("register.html", error="Username is too long.")
+
     if password != conf_password:
         return render_template("register.html", error="Passwords do not match!")
 
