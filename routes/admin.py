@@ -27,14 +27,15 @@ def admin():
                 return render_template("admin.html", error="Please enter a valid username")
             user = get_user_by_username(request.form.get('username'))
 
+            if user == None:
+                return render_template("admin.html", error="A user with than name doesn't exist.")
+
             tables = get_tables_by_user(user["id"])
             formatted_tables = []
             for table in tables:
                 table["date_created"] = format_date(table["date_created"])
                 formatted_tables += [table]
 
-            if user == None:
-                return render_template("admin.html", error="A user with than name doesn't exist.")
             return render_template("admin.html", user=user, tables=formatted_tables)
 
         if form_type == "change_password":
