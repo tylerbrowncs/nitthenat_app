@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  NitTheNat | Admin
+{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}" />
+{% endblock %}
+
+{% block content %}
+  <div class="panel">
+    <div class="admin-panel">
+      <h1>Admin Portal</h1>
+
+      <div class="tabs">
+        <input class="tabs_input" type="radio" name="tab" id="tab1" checked />
+
+        <!--<input class="tabs_input" type="radio" name="tab" id="tab2" /> 
+        <input class="tabs_input" type="radio" name="tab" id="tab3">
+        <input class="tabs_input" type="radio" name="tab" id="tab4">     -->
+
+        <div class="tab-buttons">
+          <label for="tab1">User Search</label>
+          <!--<label for="tab2">Table Search</label>
+            <label for="tab3">Logs</label>
+            <label for="tab4">Misc</label>     -->
+        </div>
+
+        <div class="tab-content">
+          <div class="content" id="content1">
+            <div class="content" id="content1">
+              <form method="POST" class="password-section">
+                <input type="hidden" name="form_type" value="user_search" />
+                <input class="input" type="text" name="username" placeholder="Username" required/><br /><br />
+                <button class="btn" type="submit">Search</button>
+              </form>
+
+              {% if message %}
+                <p style="color: gray;">{{ message }}</p>
+              {% endif %}
+              {% if error %}
+                <p style="color: red;">{{ error }}</p>
+              {% endif %}
+
+              {% if user %}
+                <br />
+                <div class="user-card">
+                  <div class="user-header">
+                    <img src="https://nitthenat.com/profile/image/{{ user.username }}" alt="Profile" />
+
+                    <div class="user-info-form">
+                      <div class="input-group">
+                        <label>ID</label>
+                        <input class="input readonly" type="text" value="{{ user.id }}" readonly />
+                      </div>
+                      <div class="input-group">
+                        <label>Role</label>
+                        <input class="input readonly" type="text" value="{{ user.role }}" readonly />
+                      </div>
+
+                      <div class="input-group">
+                        <label>Username</label>
+                        <input class="input readonly" type="text" value="{{ user.username }}" readonly />
+                      </div>
+
+                      <div class="input-group">
+                        <label>Display Name</label>
+                        <input class="input readonly" type="text" value="{{ user.display_name }}" readonly />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="user-actions">
+                    <form method="POST">
+                      <input type="hidden" name="form_type" value="reset_pfp" />
+                      <input type="hidden" name="user_id" value="{{ user.id }}" />
+                      <button type="submit" class="danger">Reset Profile Picture</button>
+                    </form>
+
+                    <form method="POST">
+                      <input type="hidden" name="form_type" value="change_password" />
+                      <input type="hidden" name="user_id" value="{{ user.id }}" />
+                      <input type="password" name="new_password" placeholder="New Password" required />
+                      <button type="submit">Change Password</button>
+                    </form>
+                  </div>
+
+                  <div class="user-tables">
+                    <h3>User Tables</h3>
+
+                    {% if tables %}
+                      <div class="table-header">
+                        <div>Table Name</div>
+                        <div>Table ID</div>
+                        <div>Date Created (GMT/BST)</div>
+                        <div></div>
+                      </div>
+
+                      {% for table in tables %}
+                        <div class="table-row">
+                          <div class="table-cell">
+                            <input class="input readonly" type="text" value="{{ table.table_name }}" readonly />
+                          </div>
+
+                          <div class="table-cell">
+                            <input class="input readonly" type="text" value="{{ table.table_id }}" readonly />
+                          </div>
+
+                          <div class="table-cell">
+                            <input class="input readonly" type="text" value="{{ table.date_created }}" readonly />
+                          </div>
+
+                          <a href="https://nitthenat.com/table/{{ table.table_id }}" class="table-btn" target="_blank">View</a>
+                        </div>
+                      {% endfor %}
+                    {% else %}
+                      <p>No tables found.</p>
+                    {% endif %}
+                  </div>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="content" id="content2">
+            <h2>Tabke Search</h2>
+          </div>
+
+          <!--      <div class="content" id="content3">
+                <h2>Settings</h2>
+                <p>Admin configuration options.</p>
+            </div>
+
+            <div class="content" id="content4">
+                <h2>Settings 2</h2>
+                <p>Admin configuration options.</p>
+            </div>     -->
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

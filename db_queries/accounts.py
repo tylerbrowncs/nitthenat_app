@@ -56,6 +56,17 @@ def upload_pfp(user_id, pic_bin):
     
     cursor.connection.commit()
 
+def delete_pfp(user_id):
+    cursor = get_cursor()
+    
+    cursor.execute("""
+        UPDATE nitthenat_users
+        SET profile_pic = ?
+        WHERE id = ?
+    """, (None, user_id))
+    
+    cursor.connection.commit()
+
 
 def change_display_name(user_id, name):
     cursor = get_cursor()

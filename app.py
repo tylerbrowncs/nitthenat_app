@@ -51,6 +51,9 @@ app.register_blueprint(tables_bp)
 from routes.account_management import accountsmgmt_bp
 app.register_blueprint(accountsmgmt_bp)
 
+from routes.admin import admin_bp
+app.register_blueprint(admin_bp)
+
 #######################################
 #
 #                Home

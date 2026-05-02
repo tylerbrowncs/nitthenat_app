@@ -33,8 +33,9 @@
       <div class="divider"></div>
 
       <div class="profile-right">
-
+        <input type="text" name="readonlyusername" placeholder="{{ session['username'] }}" readonly>
         <form method="POST" class="display-name-section">
+            
              <input type="hidden" name="form_type" value="display_name">
 
           <input type="text" name="display_name" value="{{ session.display_name }}">

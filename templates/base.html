@@ -67,6 +67,9 @@
             <div class="dropdown">
               <a href="{{ url_for('accounts_mgmt.profile') }}">Profile</a>
               <a href="{{ url_for('tables.tables') }}">My Tables</a>
+              {% if session.role == 'admin' %}
+                <a href="{{ url_for('admin.admin') }}">Admin Portal</a>
+              {% endif %}
               <a href="{{ url_for('accounts_mgmt.logout') }}">Logout</a>
             </div>
           </div>
