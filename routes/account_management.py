@@ -81,6 +81,9 @@ def register():
 
     if len(username) > 20:
         return render_template("register.html", error="Username is too long.")
+    
+    if " " in username:
+        return render_template("register.html", error="Usernames cannot have a space.")
 
     if password != conf_password:
         return render_template("register.html", error="Passwords do not match!")
