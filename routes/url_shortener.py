@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, copy_current_request_context
+from flask import Blueprint, render_template, request, redirect, copy_current_request_context, session, url_for
 
 from utils.generator_urls import generate_string
 from db_queries.logger import log
@@ -23,7 +23,10 @@ def save_urls(data):
 @shortener_bp.route("/shorten", methods=["GET", "POST"])
 def shorten():
     short_url = None
-
+    if "username" not in session:
+        return redirect(url_for("accounts_mgmt.login"))
+    if session["username"] == None or session["username"] == "":
+        return redirect(url_for("accounts_mgmt.login"))
     if request.method == "POST":
         original_url = request.form.get("url")
 
