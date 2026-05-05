@@ -84,3 +84,18 @@ def get_tables_by_user(user_id):
          "date_created": row.created_on}
          for row in rows
     ]
+
+def delete_table(table_id):
+    conn = pyodbc.connect(conn_str)
+    cursor = conn.cursor()
+
+    query = """
+    DELETE FROM dbo.nitthenat_tables
+    WHERE table_id = ?;
+    """
+
+    cursor.execute(query, (table_id,))
+
+    cursor.commit()
+    cursor.close()
+    conn.close()
