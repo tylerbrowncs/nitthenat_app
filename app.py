@@ -1,4 +1,4 @@
-from flask import Flask, current_app,redirect, request, render_template_string, render_template, send_file, copy_current_request_context
+from flask import Flask, current_app,redirect, request, render_template_string, render_template, send_file, copy_current_request_context, session
 from utils.coloring import hex_to_rgb
 from utils.generator_urls import generate_string
 from utils.table_generator import generate_war_image
@@ -15,17 +15,28 @@ import json, os, threading
 
 
 
+from werkzeug.middleware.proxy_fix import ProxyFix
+from datetime import timedelta
+
 app = Flask(__name__)
+
+app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
+
+app.config.update(
+    SECRET_KEY=SECRET,
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_SAMESITE='Lax',
+    PERMANENT_SESSION_LIFETIME=timedelta(days=30),
+    MAX_CONTENT_LENGTH=5*1024*1024
+)
+
+@app.before_request
+def make_session_permanent():
+    session.permanent = True
 
 limiter.init_app(app)
 
-app.config.update(
-    SECRET_KEY="SECRET",
-    SESSION_COOKIE_HTTPONLY=True,
-    SESSION_COOKIE_SECURE=True,   # only if HTTPS
-    SESSION_COOKIE_SAMESITE='Lax',
-    MAX_CONTENT_LENGTH = 5*1024*1024 #5MB
-)
 
 #######################################
 #
