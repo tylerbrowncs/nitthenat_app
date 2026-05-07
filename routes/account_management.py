@@ -48,6 +48,7 @@ def login():
                 session['username'] = user['username']
                 session['display_name'] = user["display_name"]
                 session['role'] = user["role"]
+                session.permanent = True
 
                 ip = request.headers.get("X-Forwarded-For", request.remote_addr)
                 if ip:
