@@ -42,9 +42,4 @@ def log(log_type: str, message: str, user: str):
         print("LOGGED", flush=True)
 
     finally:
-        try:
-            cursor.close()
-        except:
-            pass
-
         print("LOGGED")

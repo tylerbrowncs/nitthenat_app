@@ -1,53 +1,40 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
-{% block title %}Home | NitTheNat{% endblock %}
+{% block title %}
+  Home | NitTheNat
+{% endblock %}
 
 {% block content %}
-
-
-{% if live %}
-<div class="live-card">
-    <h1><a href="https://twitch.nitthenat.com"> 🔴 NAT IS LIVE!!! 🔴 </a> </h1>
-</div>
-
-{% endif %}
-<div class="profile-card">
+  {% if live %}
+    <div class="live-card">
+      <h1><a href="https://twitch.nitthenat.com">🔴 NAT IS LIVE!!! 🔴</a></h1>
+    </div>
+  {% endif %}
+  <div class="profile-card">
     <div class="header-banner">
-        <img src="https://static-cdn.jtvnw.net/jtv_user_pictures/55d25e67-8952-4674-8a9b-778895aa2d04-profile_image-70x70.png"
-             alt="NiTTHeNat"
-             class="profile-pic">
+      <img src="https://static-cdn.jtvnw.net/jtv_user_pictures/55d25e67-8952-4674-8a9b-778895aa2d04-profile_image-70x70.png" alt="NiTTHeNat" class="profile-pic" />
 
-        <div class="header-text">
-            <h1>Nathaniel</h1>
-            <p>@NitTheNat</p>
-        </div>
+      <div class="header-text">
+        <h1>Nathaniel</h1>
+        <p>@NitTheNat</p>
+      </div>
     </div>
 
     <div class="tag-container">
-        <span class="tag">ARC Team Leader</span>
-        <span class="tag">TM Team Member</span>
-        <span class="tag">Speedrunner</span>
-        <span class="tag">Streamer</span>
+      <span class="tag">ARC Team Leader</span>
+      <span class="tag">TM Team Member</span>
+      <span class="tag">Speedrunner</span>
+      <span class="tag">Streamer</span>
     </div>
 
     <div class="bio">
-        <p>
-            Funny goofy streamer, whose chair has wheels.
-            Heavily involved in the competitive Mario Kart scene.
-        </p>
+      <p>Funny goofy streamer, whose chair has wheels. Heavily involved in the competitive Mario Kart scene.</p>
     </div>
 
     <div class="social-links">
-        <a href="https://twitch.tv/nitthenat" class="social-icon">
-            <i class="fab fa-twitch"></i>
-        </a>
-        <a href="https://x.com/nitthenat_" class="social-icon">
-            <i class="fab fa-twitter"></i>
-        </a>
-        <a href="https://discord.nitthenat.com" class="social-icon">
-            <i class="fab fa-discord"></i>
-        </a>
+      <a href="https://twitch.tv/nitthenat" class="social-icon"><i class="fab fa-twitch"></i></a>
+      <a href="https://x.com/nitthenat_" class="social-icon"><i class="fab fa-twitter"></i></a>
+      <a href="https://discord.nitthenat.com" class="social-icon"><i class="fab fa-discord"></i></a>
     </div>
-</div>
-
+  </div>
 {% endblock %}
