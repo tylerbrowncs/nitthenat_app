@@ -1,58 +1,39 @@
-import pyodbc, pytz
+import zoneinfo
 from datetime import datetime
 from db_queries.db import get_cursor, get_db
 
 
-from sqldb_connection import SERVER, DATABASE, USERNAME, PASSWORD, DRIVER
-
-# ---- CONNECTION STRING ----
-conn_str = (
-    f"DRIVER={DRIVER};"
-    #"DRIVER={SQL Server};"
-    f"SERVER={SERVER};"
-    f"DATABASE={DATABASE};"
-    f"UID={USERNAME};"
-    f"PWD={PASSWORD};"
-    "TrustServerCertificate=yes;"
-)
-
 def save_image(img_bytes, user=None, table_title=None):
-
-
     conn = get_db()
     cursor = get_cursor()
 
-
     query = """
     INSERT INTO nitthenat_tables (table_image, created_by, created_on, table_title)
-    OUTPUT INSERTED.table_id
-    VALUES (?, ?, ?, ?)
+    VALUES (%s, %s, %s, %s)
+    RETURNING table_id
     """
-    lon = pytz.timezone('Europe/London')
+    lon = zoneinfo.ZoneInfo('Europe/London')
     created_on = datetime.now(lon)
 
     cursor.execute(query, (img_bytes, user, created_on, table_title))
-
+    
     inserted_id = cursor.fetchone()[0]
-
     conn.commit()
 
     return inserted_id
 
-def get_image_bytes(table_id):
-    conn = get_db()
-    cursor = get_cursor()
 
+def get_image_bytes(table_id):
+    cursor = get_cursor()
 
     query = """
     SELECT table_image
-    FROM dbo.nitthenat_tables
-    WHERE table_id = ?
+    FROM nitthenat_tables
+    WHERE table_id = %s
     """
 
     cursor.execute(query, (table_id,))
     row = cursor.fetchone()
-
 
     if row is None:
         return None
@@ -62,35 +43,34 @@ def get_image_bytes(table_id):
 
 def get_tables_by_user(user_id, page=1, per_page=10):
 
-    cursor = get_cursor()
+    cursor = get_db().cursor(dictionary=True)
 
     offset = (page - 1) * per_page
     count_query = """
-    SELECT COUNT(*)
-    FROM dbo.nitthenat_tables
-    WHERE created_by = ?;
+    SELECT COUNT(*) AS total
+    FROM nitthenat_tables
+    WHERE created_by = %s;
     """
 
     cursor.execute(count_query, (user_id,))
-    total_tables = cursor.fetchone()[0]
+    total_tables = cursor.fetchone()["total"]
 
     query = """
     SELECT table_id, created_on, table_title
-    FROM dbo.nitthenat_tables
-    WHERE created_by = ?
+    FROM nitthenat_tables
+    WHERE created_by = %s
     ORDER BY created_on DESC
-    OFFSET ? ROWS
-    FETCH NEXT ? ROWS ONLY;
+    LIMIT %s OFFSET %s;
     """
 
-    cursor.execute(query, (user_id, offset, per_page))
+    cursor.execute(query, (user_id, per_page, offset))
     rows = cursor.fetchall()
 
     tables = [
         {
-            "table_name": row.table_title,
-            "table_id": row.table_id,
-            "date_created": row.created_on
+            "table_name": row["table_title"],
+            "table_id": row["table_id"],
+            "date_created": row["created_on"]
         }
         for row in rows
     ]
@@ -103,10 +83,9 @@ def delete_table(table_id):
     cursor = get_cursor()
 
     query = """
-    DELETE FROM dbo.nitthenat_tables
-    WHERE table_id = ?;
+    DELETE FROM nitthenat_tables
+    WHERE table_id = %s;
     """
 
     cursor.execute(query, (table_id,))
-
     conn.commit()

@@ -1,9 +1,8 @@
-import pytz
+import zoneinfo
 from datetime import datetime
 
-from db_queries.db import get_db, get_cursor  
+from db_queries.db import get_db, get_cursor 
 
-# Allowed log types
 ALLOWED_LOG_TYPES = {"INFO", "WARNING", "ERROR", "DEBUG", "ACCESS", "TEST", "MAKE_TABLE", "URL_SHORT", "LOGIN", "REGISTER"}
 
 dev_skip_logging = False
@@ -20,7 +19,7 @@ def log(log_type: str, message: str, user: str):
     if log_type not in ALLOWED_LOG_TYPES:
         raise ValueError(f"Invalid log type: {log_type}. Must be one of {ALLOWED_LOG_TYPES}")
 
-    lon = pytz.timezone('Europe/London')
+    lon = zoneinfo.ZoneInfo('Europe/London')
     log_datetime = datetime.now(lon)
 
     try:
@@ -30,16 +29,15 @@ def log(log_type: str, message: str, user: str):
         cursor.execute(
             """
             INSERT INTO nitthenat_logs (datetime, type, message, user_ip)
-            VALUES (?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s)
             """,
-            log_datetime, log_type, message, user
+            (log_datetime, log_type, message, user)
         )
 
         conn.commit()
 
     except Exception as e:
         print(f"Failed to insert log: {e}", flush=True)
-        print("LOGGED", flush=True)
 
     finally:
-        print("LOGGED")
+        print("LOGGED", flush=True)

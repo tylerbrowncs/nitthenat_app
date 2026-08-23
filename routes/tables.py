@@ -1,4 +1,5 @@
 from io import BytesIO
+import traceback
 
 from flask import Blueprint, request, current_app, render_template, redirect, send_file, session, copy_current_request_context
 
@@ -78,12 +79,12 @@ def mktable6v6():
                 user = None
 
             try:
-
                 table_id = save_image(new_table, user, title)
-
-            except:
+                print(f"[DEBUG] Table saved successfully with ID: {table_id}", flush=True)
+            except Exception as save_err:
+                print(f"[ERROR] save_image failed: {save_err}", flush=True)
+                traceback.print_exc()
                 return render_template("403.html")
-
             #TRACK TABLE CREATION
 
             try:
@@ -97,14 +98,15 @@ def mktable6v6():
 
             @copy_current_request_context
             def log_async():
-                log("MAKE_TABLE", f"{table_id}", ip)
+                log("MAKE_TABLE", f"{str(table_id)}", ip)
 
             threading.Thread(
                 target=log_async,
                 daemon=True
             ).start()
-            return redirect("/table/" + table_id)
+            return redirect("/table/" + str(table_id))
     except Exception as e:
+        raise e
         return render_template("404.html"), 404
 
     return render_template("mktablemaker-6v6.html", COUNTRY_NAMES=COUNTRY_NAMES, filename=None)
