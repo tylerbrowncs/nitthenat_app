@@ -104,7 +104,7 @@ def isValidRoute(route):
 def track_page_views(response):
 
     if (request.path.startswith(("/r", "/image", "/static", "/favicon.ico")) \
-    or request.path == "/table") and request.path != "/register":
+    or request.path == "/table" or request.path == "/") and request.path != "/register":
         return response
     if not isValidRoute(request.path):
         return response
