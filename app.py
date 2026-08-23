@@ -121,7 +121,7 @@ def track_page_views(response):
 
     @copy_current_request_context
     def log_async():
-        log("ACCESS", path, ip)
+        log("ACCESS", path, ip, session.get('username'))
 
     threading.Thread(
         target=log_async,

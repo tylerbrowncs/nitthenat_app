@@ -56,7 +56,7 @@ def shorten():
 
             @copy_current_request_context
             def log_async():
-                log("URL_SHORT", f"{original_url} > {short_url}", ip)
+                log("URL_SHORT", f"{original_url} > {short_url}", ip, session.get('username'))
 
             threading.Thread(
                 target=log_async,

@@ -8,7 +8,7 @@ ALLOWED_LOG_TYPES = {"INFO", "WARNING", "ERROR", "DEBUG", "ACCESS", "TEST", "MAK
 dev_skip_logging = False
 
 
-def log(log_type: str, message: str, user: str):
+def log(log_type: str, message: str, user: str, username=None):
     """
     Inserts a log into the database after validating the log type.
     """
@@ -28,15 +28,16 @@ def log(log_type: str, message: str, user: str):
 
         cursor.execute(
             """
-            INSERT INTO nitthenat_logs (datetime, type, message, user_ip)
-            VALUES (%s, %s, %s, %s)
+            INSERT INTO nitthenat_logs (datetime, type, message, user_ip, username)
+            VALUES (%s, %s, %s, %s, %s)
             """,
-            (log_datetime, log_type, message, user)
+            (log_datetime, log_type, message, user, username)
         )
 
         conn.commit()
 
     except Exception as e:
+        raise e
         print(f"Failed to insert log: {e}", flush=True)
 
     finally:
