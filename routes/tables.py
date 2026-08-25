@@ -96,12 +96,24 @@ def mktable6v6():
             except:
                 ip = request.remote_addr
 
-            @copy_current_request_context
-            def log_async():
-                log("MAKE_TABLE", f"{str(table_id)}", ip)
+            import logging
+
+            from flask import current_app
+
+            app = current_app._get_current_object()
+            current_user = session.get('username')
+
+            def log_async(app_obj, user, t_id, ip_addr):
+                # Manually push an application context for this thread
+                with app_obj.app_context():
+                    try:
+                        log("MAKE_TABLE", str(t_id), ip_addr, user)
+                    except Exception as e:
+                        print(f"Logging error: {e}")
 
             threading.Thread(
                 target=log_async,
+                args=(app, current_user, table_id, ip),
                 daemon=True
             ).start()
             return redirect("/table/" + str(table_id))
