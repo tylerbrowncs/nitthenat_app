@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html data-theme="{{ session.get('theme', 'dark') }}" lang="en">
   <head>
     <meta name="description" content="Official website of NitTheNat. Streamer | Karter | Disabled" />
     <meta name="google-site-verification" content="zFYst-_BsVsxPJYQsnnoRKvGtwiwqA4PadyPW_yHdKM" />
 
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7018911772220517"
-     crossorigin="anonymous"></script>
+      crossorigin="anonymous"></script>
 
     <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/profile.png') }}" />
     <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/profile.png') }}" />
@@ -22,6 +22,7 @@
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
     <title>
       {% block title %}
         NitTheNat
@@ -31,6 +32,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/colours.css') }}" />
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -38,9 +40,9 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     {% block head %}
-
     {% endblock %}
   </head>
+
   <body>
     <div class="top-bar">
       <div class="top-right">
@@ -48,7 +50,11 @@
           <div class="user-menu">
             <div class="user-menu">
               <div class="user-info">
-                <img class="avatar" src="{{ url_for('accounts_mgmt.profile_image', username=session.username) }}" alt="Profile" />
+                <img
+                  class="avatar"
+                  src="{{ url_for('accounts_mgmt.profile_image', username=session.username) }}"
+                  alt="Profile"
+                />
 
                 <div class="user-text">
                   <span class="username">{{ session.display_name }}</span>
@@ -57,9 +63,11 @@
                     {% if session.username == 'nitthenat' %}
                       <span class="nat-badge">NAT</span>
                     {% endif %}
+
                     {% if session.username == 'tmoney19' %}
                       <span class="dev-badge">DEVELOPER</span>
                     {% endif %}
+
                     {% if session.role == 'admin' %}
                       <span class="admin-badge">ADMIN</span>
                     {% endif %}
@@ -67,32 +75,43 @@
                 </div>
               </div>
             </div>
+
             <div class="dropdown">
               <a href="{{ url_for('accounts_mgmt.profile') }}">Profile</a>
               <a href="{{ url_for('tables.tables') }}">My Tables</a>
+
               {% if session.role == 'admin' %}
                 <a href="{{ url_for('admin.admin') }}">Admin Portal</a>
               {% endif %}
+
               <a href="{{ url_for('accounts_mgmt.logout') }}">Logout</a>
             </div>
           </div>
         {% else %}
-          <a href="{{ url_for('accounts_mgmt.login') }}" class="login-btn"><i class="fas fa-sign-in-alt"></i> Login</a>
+          <a href="{{ url_for('accounts_mgmt.login') }}" class="login-btn">
+            <i class="fas fa-sign-in-alt"></i> Login
+          </a>
         {% endif %}
       </div>
     </div>
 
-    <button class="menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+    <button class="menu-btn" onclick="toggleSidebar()" aria-label="Open menu">
+      <i class="fas fa-bars"></i>
+    </button>
 
     <div id="overlay" onclick="toggleSidebar()"></div>
 
     <div id="mySidebar" class="sidebar">
       <div class="sidebar-header">
-        <button class="close-menu" onclick="toggleSidebar()"><i class="fas fa-times"></i></button>
+        <button class="close-menu" onclick="toggleSidebar()" aria-label="Close menu">
+          <i class="fas fa-times"></i>
+        </button>
       </div>
 
       <div class="nav-content">
-        <a href="{{ url_for('home') }}"><i class="fas fa-home"></i> Home</a>
+        <a href="{{ url_for('home') }}">
+          <i class="fas fa-home"></i> Home
+        </a>
 
         <button class="dropdown-btn">
           <i class="fas fa-newspaper"></i> Whats new?
@@ -103,7 +122,9 @@
           <a href="{{ url_for('posts.mkw100') }}">100% Speedrun</a>
         </div>
 
-        <a href="{{ url_for('pages.tourneys') }}"><i class="fa fa-users"></i> Tournaments</a>
+        <a href="{{ url_for('pages.tourneys') }}">
+          <i class="fa fa-users"></i> Tournaments
+        </a>
 
         <button class="dropdown-btn">
           <i class="fas fa-screwdriver-wrench"></i> Tools
@@ -115,14 +136,33 @@
           <a href="{{ url_for('tables.mktable6v6') }}">6v6 Table Generator</a>
         </div>
 
-        <a href="https://twitch.tv/nitthenat"><i class="fab fa-twitch"></i> Twitch</a>
+        <a href="https://twitch.tv/nitthenat">
+          <i class="fab fa-twitch"></i> Twitch
+        </a>
+
+        <!-- Theme Toggle -->
+        <a
+          href="{{ url_for('toggle_theme') }}"
+          class="theme-toggle"
+          aria-label="Toggle light and dark mode"
+        >
+          {% if session.get('theme', 'dark') == 'dark' %}
+            <i class="fas fa-sun"></i>
+            <span>Light Mode</span>
+          {% else %}
+            <i class="fas fa-moon"></i>
+            <span>Dark Mode</span>
+          {% endif %}
+        </a>
       </div>
-      <div class="sidebar-watermark">Developed by TMoney19</div>
+
+      <div class="sidebar-watermark">
+        Developed by TMoney19
+      </div>
     </div>
 
     <div class="page-wrapper">
       {% block content %}
-
       {% endblock %}
     </div>
 

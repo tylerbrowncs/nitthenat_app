@@ -150,7 +150,9 @@ def tables():
         return redirect("tables.mktable6v6")
     
 
-    user_tables = get_tables_by_user(session["user_id"])
+    user_tables, table_count = get_tables_by_user(session["user_id"])
+
+    print(user_tables)
 
     return render_template("my_tables.html", tables=user_tables)
     

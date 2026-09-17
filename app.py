@@ -1,4 +1,4 @@
-from flask import Flask, current_app,redirect, request, render_template_string, render_template, send_file, copy_current_request_context, session
+from flask import Flask, current_app,redirect, url_for, request, render_template_string, render_template, send_file, copy_current_request_context, session
 from utils.coloring import hex_to_rgb
 from utils.generator_urls import generate_string
 from utils.table_generator import generate_war_image
@@ -31,6 +31,13 @@ app.config.update(
     PERMANENT_SESSION_LIFETIME=timedelta(days=30),
     MAX_CONTENT_LENGTH=5*1024*1024
 )
+
+@app.route("/toggle-theme")
+def toggle_theme():
+    current_theme = session.get("theme", "dark")
+    session["theme"] = "light" if current_theme == "dark" else "dark"
+
+    return redirect(request.referrer or url_for("index"))
 
 @app.before_request
 def make_session_permanent():
