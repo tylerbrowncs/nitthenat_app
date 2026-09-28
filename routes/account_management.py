@@ -36,9 +36,15 @@ def login():
         print(e)
         return render_template("403.html")
 
+
+    ip = request.headers.get("X-Forwarded-For", request.remote_addr)
+    if ip:
+        ip = ip.split(",")[0].strip()
+
     if user:
         stored_hash = user["hashed_password"] 
 
+        
         try:
             if bcrypt.checkpw(
                 password.encode('utf-8'),
@@ -50,9 +56,6 @@ def login():
                 session['role'] = user["role"]
                 session.permanent = True
 
-                ip = request.headers.get("X-Forwarded-For", request.remote_addr)
-                if ip:
-                    ip = ip.split(",")[0].strip()
 
                 @copy_current_request_context
                 def log_async():
@@ -63,7 +66,14 @@ def login():
                 return redirect(url_for('home'))
 
         except ValueError:
+            
             return render_template("login.html", error="Account error. Reset password.")
+
+    @copy_current_request_context
+    def log_failure_async():
+        log("LOGIN_FAILURE", username, ip)
+            
+    threading.Thread(target=log_failure_async, daemon=True).start()
 
     return render_template("login.html", error="Invalid username or password!")
 

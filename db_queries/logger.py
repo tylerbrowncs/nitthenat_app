@@ -3,7 +3,7 @@ from datetime import datetime
 
 from db_queries.db import get_db, get_cursor 
 
-ALLOWED_LOG_TYPES = {"INFO", "WARNING", "ERROR", "DEBUG", "ACCESS", "TEST", "MAKE_TABLE", "URL_SHORT", "LOGIN", "REGISTER"}
+ALLOWED_LOG_TYPES = {"INFO", "WARNING", "ERROR", "DEBUG", "ACCESS", "TEST", "MAKE_TABLE", "URL_SHORT", "LOGIN", "LOGIN_FAILURE","REGISTER"}
 
 dev_skip_logging = False
 
